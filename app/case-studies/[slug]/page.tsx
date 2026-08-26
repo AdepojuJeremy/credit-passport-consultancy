@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { JsonLd } from "@/components/json-ld";
 import { engagementPatterns, getEngagementPattern } from "@/data/engagement-patterns";
+import { breadcrumbStructuredData } from "@/lib/structured-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -17,9 +19,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const pattern = getEngagementPattern(slug);
   if (!pattern) return {};
 
+  const canonical = `/case-studies/${pattern.slug}`;
+
   return {
     title: pattern.title,
     description: pattern.summary,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      title: pattern.title,
+      description: pattern.summary,
+      url: canonical,
+    },
   };
 }
 
@@ -46,6 +57,14 @@ export default async function EngagementPatternPage({ params }: PageProps) {
 
   return (
     <article>
+      <JsonLd
+        data={breadcrumbStructuredData([
+          { name: "Home", path: "/" },
+          { name: "Selected Work", path: "/case-studies" },
+          { name: pattern.title, path: `/case-studies/${pattern.slug}` },
+        ])}
+      />
+
       <header className="section-grid border-b hairline">
         <div className="site-container py-20 md:py-32">
           <Link href="/case-studies" className="inline-flex items-center gap-2 text-sm text-[color:var(--muted)] hover:text-[color:var(--foreground)]">
