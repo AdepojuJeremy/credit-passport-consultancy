@@ -1,28 +1,22 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-
-const institutionTypes = [
-  "Bank / Microfinance",
-  "Digital lender / BNPL",
-  "Fintech / Embedded credit",
-  "Credit infrastructure / Data platform",
-  "Other financial institution",
-];
-
-const problemTypes = [
-  "Credit & underwriting strategy",
-  "Decision intelligence",
-  "Portfolio & risk analytics",
-  "Data & financial intelligence",
-  "AI & machine learning",
-  "Decision & data infrastructure",
-  "Not sure yet",
-];
+import {
+  consultationInstitutionTypes,
+  consultationProblemTypes,
+  type ConsultationContext,
+} from "@/lib/consultation-context";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-export function ConsultationForm() {
+type ConsultationFormProps = ConsultationContext;
+
+export function ConsultationForm({
+  contextLabel,
+  sourceContext,
+  institutionType,
+  problemType,
+}: ConsultationFormProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
 
@@ -67,6 +61,16 @@ export function ConsultationForm() {
       aria-describedby="consultation-form-note"
       aria-busy={status === "submitting"}
     >
+      {contextLabel ? (
+        <div className="border-b hairline bg-[color:var(--panel)] px-5 py-4 text-sm leading-6">
+          <span className="kicker mr-3 text-[color:var(--brand-blue)]">Enquiry context</span>
+          <span>{contextLabel}</span>
+          <span className="ml-2 text-[color:var(--muted)]">Prefilled fields remain editable.</span>
+        </div>
+      ) : null}
+
+      <input type="hidden" name="sourceContext" value={sourceContext} />
+
       <div className="grid gap-6 border-b hairline py-7 md:grid-cols-2">
         <label className="text-sm">
           Your name
@@ -86,16 +90,16 @@ export function ConsultationForm() {
         </label>
         <label className="text-sm">
           Institution type
-          <select className={inputClass} name="institutionType" defaultValue="" required>
+          <select className={inputClass} name="institutionType" defaultValue={institutionType ?? ""} required>
             <option value="" disabled>Select one</option>
-            {institutionTypes.map((type) => <option key={type}>{type}</option>)}
+            {consultationInstitutionTypes.map((type) => <option key={type}>{type}</option>)}
           </select>
         </label>
         <label className="text-sm">
           Primary area
-          <select className={inputClass} name="problemType" defaultValue="" required>
+          <select className={inputClass} name="problemType" defaultValue={problemType ?? ""} required>
             <option value="" disabled>Select one</option>
-            {problemTypes.map((type) => <option key={type}>{type}</option>)}
+            {consultationProblemTypes.map((type) => <option key={type}>{type}</option>)}
           </select>
         </label>
       </div>

@@ -83,7 +83,7 @@ export default async function ServicePage({ params }: PageProps) {
             </h2>
           </div>
           <Link
-            href="/contact"
+            href={`/contact?service=${service.slug}`}
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-mint)] px-6 py-3 text-sm font-medium text-[#081a3a] md:mt-0"
           >
             Start a conversation <ArrowUpRight size={15} />
