@@ -190,7 +190,15 @@ export function HeroMotionLayer() {
       return;
     }
 
-    setTarget(document.querySelector("#main-content > section.section-grid:first-child"));
+    const host = document.querySelector("#main-content > section.section-grid:first-child");
+    if (!host) return;
+
+    host.classList.add("hero-globe-host");
+    setTarget(host);
+
+    return () => {
+      host.classList.remove("hero-globe-host");
+    };
   }, [pathname]);
 
   if (pathname !== "/" || !target) return null;
