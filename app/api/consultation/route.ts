@@ -51,9 +51,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const headers: HeadersInit = { "Content-Type": "application/json" };
+  const headers = new Headers({ "Content-Type": "application/json" });
   if (process.env.CONSULTATION_WEBHOOK_BEARER_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.CONSULTATION_WEBHOOK_BEARER_TOKEN}`;
+    headers.set("Authorization", `Bearer ${process.env.CONSULTATION_WEBHOOK_BEARER_TOKEN}`);
   }
 
   const upstream = await fetch(webhookUrl, {
