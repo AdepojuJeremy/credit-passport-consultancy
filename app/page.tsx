@@ -4,6 +4,7 @@ import { DecisionSystem } from "@/components/decision-system";
 import { Reveal } from "@/components/reveal";
 import { engagementPatterns } from "@/data/engagement-patterns";
 import { researchPosts } from "@/data/research-posts";
+import { sectors } from "@/data/sectors";
 import { services } from "@/data/services";
 
 const marqueeItems = [
@@ -138,34 +139,33 @@ export default function Home() {
       <section className="site-container py-24 md:py-36">
         <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
           <div>
-            <p className="kicker">04 / Research</p>
-            <p className="mt-5 max-w-52 text-sm leading-6 text-[color:var(--muted)]">
-              Practitioner research on the architecture and evaluation of consequential decisions.
+            <p className="kicker">04 / Who we work with</p>
+            <p className="mt-5 max-w-56 text-sm leading-6 text-[color:var(--muted)]">
+              Institutions where credit decisions materially affect growth, losses, customer access or operational risk.
             </p>
           </div>
           <div>
             <Reveal>
-              <h2 className="section-title max-w-4xl">Research for consequential decisions.</h2>
+              <h2 className="section-title max-w-4xl">Different institutions. The same underlying question: how should we decide?</h2>
             </Reveal>
-            <p className="mt-7 max-w-2xl text-lg leading-7 text-[color:var(--muted)]">
-              CreditPassport Research studies how institutions make high-stakes decisions under uncertainty, and how those systems can become more accurate, explainable and economically useful.
-            </p>
-            <div className="mt-16 border-t hairline">
-              {researchPosts.map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/research/${post.slug}`}
-                  className="research-cell grid gap-4 border-b hairline p-5 md:grid-cols-[64px_1fr_1fr_24px] md:items-center"
-                >
-                  <span className="kicker opacity-60">{post.number}</span>
-                  <span className="font-[family-name:var(--font-manrope)] text-xl font-semibold tracking-[-0.04em]">{post.title}</span>
-                  <span className="text-sm leading-6 opacity-60">{post.dek}</span>
-                  <ArrowUpRight size={16} aria-hidden="true" />
-                </Link>
+            <div className="mt-16 grid gap-px bg-[color:var(--line-strong)] sm:grid-cols-2">
+              {sectors.map((sector) => (
+                <article key={sector.number} className="min-h-80 bg-[color:var(--surface)] p-6">
+                  <span className="kicker text-[color:var(--brand-blue)]">{sector.number}</span>
+                  <h3 className="mt-14 font-[family-name:var(--font-manrope)] text-2xl font-semibold tracking-[-0.045em]">{sector.title}</h3>
+                  <p className="mt-4 max-w-md text-sm leading-6 text-[color:var(--muted)]">{sector.description}</p>
+                  <div className="mt-8 flex flex-wrap gap-2">
+                    {sector.problems.map((problem) => (
+                      <span key={problem} className="rounded-full border hairline bg-[color:var(--panel)] px-3 py-2 text-xs text-[color:var(--muted)]">
+                        {problem}
+                      </span>
+                    ))}
+                  </div>
+                </article>
               ))}
             </div>
-            <Link href="/research" className="mt-8 inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--brand-blue)]">
-              Enter CreditPassport Research <ArrowRight size={15} aria-hidden="true" />
+            <Link href="/contact" className="mt-8 inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--brand-blue)]">
+              Discuss your institution <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -175,42 +175,78 @@ export default function Home() {
         <div className="site-container py-24 md:py-36">
           <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
             <div>
-              <p className="kicker">05 / Selected work</p>
+              <p className="kicker">05 / Research</p>
               <p className="mt-5 max-w-52 text-sm leading-6 text-[color:var(--muted)]">
-                Engagement patterns published with explicit evidence status.
+                Practitioner research on the architecture and evaluation of consequential decisions.
               </p>
             </div>
             <div>
               <Reveal>
-                <h2 className="section-title max-w-4xl">Work should be measured by what changed.</h2>
+                <h2 className="section-title max-w-4xl">Research for consequential decisions.</h2>
               </Reveal>
-              <div className="mt-16 grid gap-px bg-[color:var(--line-strong)] md:grid-cols-3">
-                {engagementPatterns.map((pattern) => (
+              <p className="mt-7 max-w-2xl text-lg leading-7 text-[color:var(--muted)]">
+                CreditPassport Research studies how institutions make high-stakes decisions under uncertainty, and how those systems can become more accurate, explainable and economically useful.
+              </p>
+              <div className="mt-16 border-t hairline">
+                {researchPosts.map((post) => (
                   <Link
-                    key={pattern.slug}
-                    href={`/case-studies/${pattern.slug}`}
-                    className="group flex min-h-80 flex-col bg-[color:var(--surface)] p-7 transition-transform duration-300 hover:-translate-y-1"
+                    key={post.slug}
+                    href={`/research/${post.slug}`}
+                    className="research-cell grid gap-4 border-b hairline p-5 md:grid-cols-[64px_1fr_1fr_24px] md:items-center"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="kicker text-[color:var(--brand-blue)]">{pattern.number}</span>
-                      <ArrowUpRight className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={16} aria-hidden="true" />
-                    </div>
-                    <div className="mt-auto">
-                      <p className="kicker text-[color:var(--muted)]">{pattern.status}</p>
-                      <h3 className="mt-4 font-[family-name:var(--font-manrope)] text-2xl font-semibold tracking-[-0.045em]">{pattern.title}</h3>
-                      <p className="mt-5 text-sm leading-6 text-[color:var(--muted)]">{pattern.summary}</p>
-                    </div>
+                    <span className="kicker opacity-60">{post.number}</span>
+                    <span className="font-[family-name:var(--font-manrope)] text-xl font-semibold tracking-[-0.04em]">{post.title}</span>
+                    <span className="text-sm leading-6 opacity-60">{post.dek}</span>
+                    <ArrowUpRight size={16} aria-hidden="true" />
                   </Link>
                 ))}
               </div>
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                <p className="max-w-3xl text-xs leading-5 text-[color:var(--muted)]">
-                  Public outcome claims are withheld until underlying evidence and publication permission are reviewed.
-                </p>
-                <Link href="/case-studies" className="inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--brand-blue)]">
-                  View selected work <ArrowRight size={15} aria-hidden="true" />
+              <Link href="/research" className="mt-8 inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--brand-blue)]">
+                Enter CreditPassport Research <ArrowRight size={15} aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="site-container py-24 md:py-36">
+        <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
+          <div>
+            <p className="kicker">06 / Selected work</p>
+            <p className="mt-5 max-w-52 text-sm leading-6 text-[color:var(--muted)]">
+              Engagement patterns published with explicit evidence status.
+            </p>
+          </div>
+          <div>
+            <Reveal>
+              <h2 className="section-title max-w-4xl">Work should be measured by what changed.</h2>
+            </Reveal>
+            <div className="mt-16 grid gap-px bg-[color:var(--line-strong)] md:grid-cols-3">
+              {engagementPatterns.map((pattern) => (
+                <Link
+                  key={pattern.slug}
+                  href={`/case-studies/${pattern.slug}`}
+                  className="group flex min-h-80 flex-col bg-[color:var(--surface)] p-7 transition-transform duration-300 hover:-translate-y-1"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="kicker text-[color:var(--brand-blue)]">{pattern.number}</span>
+                    <ArrowUpRight className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={16} aria-hidden="true" />
+                  </div>
+                  <div className="mt-auto">
+                    <p className="kicker text-[color:var(--muted)]">{pattern.status}</p>
+                    <h3 className="mt-4 font-[family-name:var(--font-manrope)] text-2xl font-semibold tracking-[-0.045em]">{pattern.title}</h3>
+                    <p className="mt-5 text-sm leading-6 text-[color:var(--muted)]">{pattern.summary}</p>
+                  </div>
                 </Link>
-              </div>
+              ))}
+            </div>
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+              <p className="max-w-3xl text-xs leading-5 text-[color:var(--muted)]">
+                Public outcome claims are withheld until underlying evidence and publication permission are reviewed.
+              </p>
+              <Link href="/case-studies" className="inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--brand-blue)]">
+                View selected work <ArrowRight size={15} aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </div>
@@ -218,7 +254,7 @@ export default function Home() {
 
       <section className="bg-[color:var(--brand-blue)] text-white">
         <div className="site-container py-28 md:py-44">
-          <p className="kicker text-white/65">06 / Start here</p>
+          <p className="kicker text-white/65">07 / Start here</p>
           <div className="mt-8 flex flex-col gap-10 border-t border-white/30 pt-8 md:flex-row md:items-end md:justify-between">
             <Reveal className="max-w-5xl">
               <h2 className="section-title">Have a difficult decision problem?</h2>

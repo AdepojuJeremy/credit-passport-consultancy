@@ -1,0 +1,51 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy",
+  description: "Website privacy information for CreditPassport Consulting consultation enquiries.",
+};
+
+const sections = [
+  {
+    title: "What the consultation form collects",
+    copy: "The public enquiry form asks for your name, work email, institution, role, institution type, the area you want to discuss, a description of the decision problem, the data currently available and the outcome you want to improve.",
+  },
+  {
+    title: "What the form is not for",
+    copy: "Do not submit borrower personally identifiable information, raw customer records, passwords, API keys, confidential datasets or other sensitive production data through the public enquiry form. Secure data-transfer arrangements should be agreed separately after an engagement is scoped.",
+  },
+  {
+    title: "How enquiry information is used",
+    copy: "Information submitted through the form is used to review the consulting request, understand the institution and decision problem, determine whether CreditPassport can help and communicate about the enquiry or a potential engagement.",
+  },
+  {
+    title: "Delivery infrastructure",
+    copy: "The website forwards consultation enquiries from a server-side route to a configured business intake destination. The destination is supplied through deployment configuration rather than exposed in browser code.",
+  },
+  {
+    title: "Retention and access",
+    copy: "Enquiry information should be retained only for legitimate business follow-up and record-keeping needs, with access limited to people or service providers involved in handling the enquiry. Production retention and deletion procedures should be reviewed as part of launch operations.",
+  },
+];
+
+export default function PrivacyPage() {
+  return (
+    <section className="site-container py-20 md:py-32">
+      <p className="kicker text-[color:var(--brand-blue)]">Website privacy</p>
+      <h1 className="section-title mt-8 max-w-5xl">Keep the public intake channel intentionally low-sensitivity.</h1>
+      <p className="mt-8 max-w-3xl text-lg leading-7 text-[color:var(--muted)]">
+        This page describes the current website consultation-intake design. It is operational product copy, not a substitute for jurisdiction-specific legal review before public launch.
+      </p>
+
+      <div className="mt-20 border-t hairline">
+        {sections.map((section, index) => (
+          <section key={section.title} className="grid gap-5 border-b hairline py-8 md:grid-cols-[80px_0.8fr_1.4fr]">
+            <span className="kicker text-[color:var(--brand-blue)]">{String(index + 1).padStart(2, "0")}</span>
+            <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-semibold tracking-[-0.045em]">{section.title}</h2>
+            <p className="max-w-2xl text-sm leading-7 text-[color:var(--muted)]">{section.copy}</p>
+          </section>
+        ))}
+      </div>
+    </section>
+  );
+}

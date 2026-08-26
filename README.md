@@ -19,8 +19,12 @@ The operating loop is:
 - `/research/[slug]` — source-grounded research notes
 - `/case-studies` — evidence-led selected work / engagement patterns
 - `/case-studies/[slug]` — anonymized engagement pattern pages with explicit evidence status
-- `/about`
-- `/contact`
+- `/about` — operating model, founders and principles
+- `/contact` — structured consultation intake
+- `/privacy` — current website intake/privacy boundary
+- `/robots.txt` — generated crawler policy
+- `/sitemap.xml` — generated public route index
+- `/opengraph-image` — generated branded social preview
 
 ## Research currently included
 
@@ -30,6 +34,40 @@ The operating loop is:
 4. Validate the Lending System, Not Just the Model
 
 These are practitioner research notes derived from CreditPassport's internal decision architecture. They are explicitly not presented as externally validated empirical findings.
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Quality gates:
+
+```bash
+npm run typecheck
+npm run build
+# or
+npm run check
+```
+
+## Environment
+
+Copy `.env.example` to `.env.local` for development as needed.
+
+```text
+NEXT_PUBLIC_SITE_URL=
+CONSULTATION_WEBHOOK_URL=
+CONSULTATION_WEBHOOK_BEARER_TOKEN=
+```
+
+`NEXT_PUBLIC_SITE_URL` should be the final HTTPS production origin when deployed. The consultation form is not operational until a secure webhook destination is configured.
+
+## Deployment
+
+The application is intended for a standard Next.js deployment, with Vercel as the default hosting target. Use `main` for production and pull requests for previews.
+
+See `docs/launch-readiness.md` for the deployment, indexing, security, accessibility and visual-QA checklist.
 
 ## Public claims policy
 
