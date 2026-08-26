@@ -21,6 +21,10 @@ Do not expose client-identifying operating details, datasets, decision rules, th
 
 Internal architecture can support conceptual research notes. It cannot by itself establish empirical validity, predictive power or causal impact. Public research should distinguish framework, hypothesis, internal design target and externally validated finding.
 
+External literature, standards and supervisory guidance may be cited when they directly contextualize an adjacent concept. A citation must not be presented as evidence that CreditPassport's own architecture, implementation or outcomes have been independently validated unless the cited source actually evaluates CreditPassport.
+
+Prefer primary sources and authoritative publishers where practical: original papers, standards bodies, regulators and official framework publications. Each public reference should state why it is relevant and where its relevance stops.
+
 ## Current public content status
 
 The first research set is intentionally published as practitioner research notes. The selected-work pages are intentionally labelled **Evidence pending** and contain no client names or numerical outcome claims.
