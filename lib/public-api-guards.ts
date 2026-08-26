@@ -14,6 +14,10 @@ type GuardFailure = {
 
 type GuardResult = { ok: true } | GuardFailure;
 
+type BodyReadResult =
+  | { ok: true; body: Record<string, unknown> }
+  | { ok: false; reason: "too_large" | "invalid_json" };
+
 function sameOrigin(value: string, targetOrigin: string) {
   try {
     return new URL(value).origin === targetOrigin;
@@ -79,6 +83,37 @@ export function guardPublicJsonRequest(request: Request): GuardResult {
   // headers. Those requests are still subject to strict JSON, size and field
   // validation in the endpoint itself.
   return { ok: true };
+}
+
+export async function readBoundedJsonBody(
+  request: Request,
+  maxBytes: number,
+): Promise<BodyReadResult> {
+  const contentLength = Number(request.headers.get("content-length") ?? "0");
+  if (Number.isFinite(contentLength) && contentLength > maxBytes) {
+    return { ok: false, reason: "too_large" };
+  }
+
+  let text: string;
+  try {
+    text = await request.text();
+  } catch {
+    return { ok: false, reason: "invalid_json" };
+  }
+
+  if (new TextEncoder().encode(text).byteLength > maxBytes) {
+    return { ok: false, reason: "too_large" };
+  }
+
+  try {
+    const parsed = JSON.parse(text) as unknown;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return { ok: false, reason: "invalid_json" };
+    }
+    return { ok: true, body: parsed as Record<string, unknown> };
+  } catch {
+    return { ok: false, reason: "invalid_json" };
+  }
 }
 
 export function getWebhookUrl(value: string | undefined) {
