@@ -72,7 +72,7 @@ export default async function SectorPage({ params }: PageProps) {
             <div>
               <p className="kicker">Relevant capabilities</p>
               <p className="mt-5 max-w-sm text-sm leading-6 text-[color:var(--muted)]">
-                These are common starting points, not a fixed package. The intervention should follow the evidence from the institution's actual decision system.
+                These are common starting points, not a fixed package. The intervention should follow the evidence from the institution&apos;s actual decision system.
               </p>
             </div>
             <div className="grid gap-px bg-[color:var(--line-strong)] md:grid-cols-3">
@@ -101,7 +101,7 @@ export default async function SectorPage({ params }: PageProps) {
               Not sure which capability is the real constraint?
             </h2>
           </div>
-          <Link href="/diagnostic" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-blue)] px-6 py-3 text-sm font-medium text-white md:mt-0">
+          <Link href={`/diagnostic?sector=${sector.slug}`} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-blue)] px-6 py-3 text-sm font-medium text-white md:mt-0">
             Start with the diagnostic <ArrowUpRight size={15} aria-hidden="true" />
           </Link>
         </div>
