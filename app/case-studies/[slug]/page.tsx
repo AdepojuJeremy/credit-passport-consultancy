@@ -54,7 +54,7 @@ export default async function EngagementPatternPage({ params }: PageProps) {
           <p className="kicker mt-14 text-[color:var(--brand-blue)]">{pattern.number} / Engagement pattern</p>
           <h1 className="section-title mt-6 max-w-5xl">{pattern.title}</h1>
           <p className="mt-8 max-w-3xl text-xl leading-8 text-[color:var(--muted)]">{pattern.summary}</p>
-          <div className="mt-10 inline-flex rounded-full border border-[color:var(--brand-blue)]/25 bg-[color:var(--brand-blue)]/5 px-4 py-2">
+          <div className="mt-10 inline-flex rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2">
             <span className="kicker text-[color:var(--brand-blue)]">Evidence status: {pattern.status}</span>
           </div>
         </div>
