@@ -20,3 +20,7 @@ Do not expose client-identifying operating details, datasets, decision rules, th
 ## Research rule
 
 Internal architecture can support conceptual research notes. It cannot by itself establish empirical validity, predictive power or causal impact. Public research should distinguish framework, hypothesis, internal design target and externally validated finding.
+
+## Current public content status
+
+The first research set is intentionally published as practitioner research notes. The selected-work pages are intentionally labelled **Evidence pending** and contain no client names or numerical outcome claims.
