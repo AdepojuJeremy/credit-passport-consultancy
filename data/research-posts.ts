@@ -1,3 +1,11 @@
+export type ResearchReference = {
+  title: string;
+  source: string;
+  year: string;
+  url: string;
+  context: string;
+};
+
 export type ResearchPost = {
   slug: string;
   number: string;
@@ -7,12 +15,16 @@ export type ResearchPost = {
   date: string;
   status: "Research note";
   thesis: string;
+  keywords: ReadonlyArray<string>;
   sections: ReadonlyArray<{
     heading: string;
     paragraphs: ReadonlyArray<string>;
   }>;
   implications: ReadonlyArray<string>;
   sourceNote: string;
+  references: ReadonlyArray<ResearchReference>;
+  relatedSlugs: ReadonlyArray<string>;
+  consultingSlugs: ReadonlyArray<string>;
 };
 
 export const researchPosts: ReadonlyArray<ResearchPost> = [
@@ -26,6 +38,7 @@ export const researchPosts: ReadonlyArray<ResearchPost> = [
     status: "Research note",
     thesis:
       "A model estimates something about the borrower. A policy determines what a particular lender should do with that estimate. Collapsing those layers into one score hides the actual decision logic.",
+    keywords: ["prediction", "credit policy", "decision intelligence", "underwriting", "risk appetite"],
     sections: [
       {
         heading: "The problem with score-first thinking",
@@ -57,6 +70,26 @@ export const researchPosts: ReadonlyArray<ResearchPost> = [
     ],
     sourceNote:
       "This is a CreditPassport practitioner research note derived from the internal Decision Intelligence, Policy Control and Decision Package architecture. It is a conceptual framework, not a claim of externally validated causal impact.",
+    references: [
+      {
+        title: "Prediction Policy Problems",
+        source: "American Economic Review — Jon Kleinberg, Jens Ludwig, Sendhil Mullainathan and Ziad Obermeyer",
+        year: "2015",
+        url: "https://www.aeaweb.org/articles?id=10.1257/aer.p20151023",
+        context:
+          "Provides an external economics reference for distinguishing predictive inference from the policy decision that uses a prediction. It does not validate CreditPassport's lending architecture.",
+      },
+      {
+        title: "Algorithmic Fairness",
+        source: "AEA Papers and Proceedings — Jon Kleinberg, Jens Ludwig, Sendhil Mullainathan and Ashesh Rambachan",
+        year: "2018",
+        url: "https://pubs.aeaweb.org/doi/10.1257/pandp.20181018",
+        context:
+          "Discusses how normative preferences can affect the use of an estimated prediction function, including decision thresholds, rather than being identical to the estimator itself.",
+      },
+    ],
+    relatedSlugs: ["review-is-an-uncertainty-state", "validate-the-lending-system-not-just-the-model"],
+    consultingSlugs: ["decision-intelligence", "credit-underwriting-strategy"],
   },
   {
     slug: "review-is-an-uncertainty-state",
@@ -68,6 +101,7 @@ export const researchPosts: ReadonlyArray<ResearchPost> = [
     status: "Research note",
     thesis:
       "Risk answers what we currently estimate about an applicant. Confidence answers how much evidence we have to trust that estimate. Manual review is most coherent when it is triggered by the second problem, not used as a vague substitute for risk policy.",
+    keywords: ["uncertainty", "manual review", "selective prediction", "confidence", "decision operations"],
     sections: [
       {
         heading: "Risk and confidence answer different questions",
@@ -99,6 +133,26 @@ export const researchPosts: ReadonlyArray<ResearchPost> = [
     ],
     sourceNote:
       "This note is derived from the internal CreditPassport Decision Package schema and API design, where APPROVE, DECLINE and REVIEW are separate terminal actions and REVIEW is defined around insufficient confidence or missing information.",
+    references: [
+      {
+        title: "Selective Classification for Deep Neural Networks",
+        source: "NeurIPS — Yonatan Geifman and Ran El-Yaniv",
+        year: "2017",
+        url: "https://proceedings.neurips.cc/paper/2017/hash/4a8423d5e91fda00bb7e46540e2b0cf1-Abstract.html",
+        context:
+          "Places abstention or a reject option within the selective-prediction literature: a system can decline to make an automated prediction when confidence is insufficient. CreditPassport's REVIEW state is a lending-specific design choice, not a reproduction of this method.",
+      },
+      {
+        title: "Artificial Intelligence Risk Management Framework (AI RMF 1.0)",
+        source: "U.S. National Institute of Standards and Technology",
+        year: "2023",
+        url: "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+        context:
+          "Provides broader system-risk context for evaluating uncertainty, knowledge limits, safe failure and human-AI configurations. It is not lending-specific guidance.",
+      },
+    ],
+    relatedSlugs: ["probability-is-not-a-decision", "validate-the-lending-system-not-just-the-model"],
+    consultingSlugs: ["decision-intelligence", "ai-machine-learning"],
   },
   {
     slug: "from-transactions-to-economic-events",
@@ -110,6 +164,7 @@ export const researchPosts: ReadonlyArray<ResearchPost> = [
     status: "Research note",
     thesis:
       "Raw credits, debits and narrations are not yet underwriting evidence. The critical representation layer is an event model that translates financial records into concepts such as salary, rent, debt service, business revenue and behavioural change.",
+    keywords: ["financial events", "semantic data", "transaction data", "ontology", "feature lineage"],
     sections: [
       {
         heading: "Banking language is not economic language",
@@ -141,6 +196,26 @@ export const researchPosts: ReadonlyArray<ResearchPost> = [
     ],
     sourceNote:
       "This note is derived from the internal CreditPassport Financial Events and Terminologies documents. Event examples are architectural categories, not assertions that any single behaviour is independently predictive of default.",
+    references: [
+      {
+        title: "ISO 20022 Business Model",
+        source: "ISO 20022 Registration Authority",
+        year: "Current repository",
+        url: "https://www.iso20022.org/iso20022-repository/business-model",
+        context:
+          "An external example of defining common financial business concepts and their relationships separately from message syntax. CreditPassport's event ontology is narrower and underwriting-specific.",
+      },
+      {
+        title: "Financial Industry Business Ontology (FIBO)",
+        source: "EDM Council",
+        year: "Current standard",
+        url: "https://edmcouncil.org/financial-industry-business-ontology/",
+        context:
+          "Provides broader industry context for using formal, machine-readable financial concepts and relationships to make financial data semantically unambiguous.",
+      },
+    ],
+    relatedSlugs: ["validate-the-lending-system-not-just-the-model", "probability-is-not-a-decision"],
+    consultingSlugs: ["data-financial-intelligence", "decision-data-infrastructure"],
   },
   {
     slug: "validate-the-lending-system-not-just-the-model",
@@ -152,6 +227,7 @@ export const researchPosts: ReadonlyArray<ResearchPost> = [
     status: "Research note",
     thesis:
       "The relevant question is not only whether a model predicts well. It is whether the complete decision system changes approval, default, calibration, explainability and operational performance in the intended direction.",
+    keywords: ["model validation", "model risk", "shadow mode", "decision systems", "monitoring"],
     sections: [
       {
         heading: "Predictive performance is not business performance",
@@ -183,6 +259,26 @@ export const researchPosts: ReadonlyArray<ResearchPost> = [
     ],
     sourceNote:
       "This note is derived from the internal CreditPassport validation framework, MVP roadmap and shadow-mode API design. Internal lift targets are design goals, not achieved performance claims.",
+    references: [
+      {
+        title: "Supervisory Guidance on Model Risk Management (SR 11-7)",
+        source: "Board of Governors of the Federal Reserve System and Office of the Comptroller of the Currency",
+        year: "2011",
+        url: "https://www.federalreserve.gov/boarddocs/srletters/2011/sr1107a1.pdf",
+        context:
+          "Provides banking model-risk context for conceptual soundness, outcomes analysis, ongoing monitoring, implementation verification, data quality and limits on model use.",
+      },
+      {
+        title: "Artificial Intelligence Risk Management Framework (AI RMF 1.0)",
+        source: "U.S. National Institute of Standards and Technology",
+        year: "2023",
+        url: "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+        context:
+          "Provides broader context for evaluating AI systems in their intended deployment context, tracking risks over time and documenting test, evaluation, validation and verification processes.",
+      },
+    ],
+    relatedSlugs: ["probability-is-not-a-decision", "review-is-an-uncertainty-state"],
+    consultingSlugs: ["portfolio-risk-analytics", "ai-machine-learning"],
   },
 ];
 

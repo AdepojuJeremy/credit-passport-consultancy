@@ -27,7 +27,7 @@ export default function ResearchPage() {
           <div className="lg:sticky lg:top-28 lg:self-start">
             <p className="kicker">Current notes</p>
             <p className="mt-5 max-w-sm text-sm leading-6 text-[color:var(--muted)]">
-              These are practitioner research notes grounded in the CreditPassport decision architecture. They are frameworks and hypotheses—not claims of external empirical validation.
+              These are practitioner research notes grounded in the CreditPassport decision architecture. They are frameworks and hypotheses—not claims of external empirical validation. Where external literature, standards or supervisory guidance are relevant, the notes cite them as context rather than as proof of CreditPassport outcomes.
             </p>
           </div>
 
@@ -44,7 +44,7 @@ export default function ResearchPage() {
                   <h2 className="mt-3 text-3xl tracking-[-0.05em]">{post.title}</h2>
                 </div>
                 <p className="max-w-xl text-sm leading-6 text-[color:var(--muted)]">{post.dek}</p>
-                <ArrowUpRight className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={17} />
+                <ArrowUpRight className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={17} aria-hidden="true" />
               </Link>
             ))}
           </div>
@@ -58,10 +58,11 @@ export default function ResearchPage() {
             <h2 className="max-w-4xl font-[family-name:var(--font-manrope)] text-4xl font-semibold tracking-[-0.05em] md:text-6xl">
               Separate the framework from the evidence.
             </h2>
-            <div className="mt-12 grid gap-8 sm:grid-cols-3">
+            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 ["Framework", "A structured way to think about a decision problem."],
                 ["Hypothesis", "A proposition that should be tested against relevant data and outcomes."],
+                ["External context", "Literature, standards or guidance that situate an adjacent concept without validating CreditPassport itself."],
                 ["Finding", "A claim supported by reviewed evidence, with limitations stated."],
               ].map(([title, copy]) => (
                 <div key={title} className="border-t hairline pt-5">
