@@ -67,7 +67,7 @@ MEASUREMENT_WEBHOOK_URL=
 MEASUREMENT_WEBHOOK_BEARER_TOKEN=
 ```
 
-`NEXT_PUBLIC_SITE_URL` should be the final HTTPS production origin when deployed. The consultation form is not operational until a secure webhook destination is configured.
+`NEXT_PUBLIC_SITE_URL` is an explicit canonical-origin override. On Vercel, the site can use `VERCEL_PROJECT_PRODUCTION_URL` automatically when that system environment variable is available. The consultation form is not operational until a secure `CONSULTATION_WEBHOOK_URL` destination is configured.
 
 The measurement webhook is optional. When configured, it receives only named conversion events, route path, bounded session-scoped UTM values and limited event metadata. It does not receive consultation-form text.
 
@@ -75,10 +75,26 @@ The measurement webhook is optional. When configured, it receives only named con
 
 The application is intended for a standard Next.js deployment, with Vercel as the default hosting target. Use `main` for production and pull requests for previews.
 
+After a deployment exists, run the production smoke test:
+
+```bash
+npm run verify:production -- https://your-production-origin.example --expect-ready
+```
+
+The command validates core public routes, crawler/social metadata endpoints, security headers and `/api/readiness`.
+
+A deliberately opt-in end-to-end intake check can also send one clearly marked synthetic enquiry through the configured consultation destination:
+
+```bash
+npm run verify:production -- https://your-production-origin.example --expect-ready --submit-intake
+```
+
+The repository also includes a manual GitHub Actions workflow named **Production smoke** for running the same verification against a deployed origin.
+
 See:
 
 - `docs/launch-readiness.md` for the deployment, indexing, security, accessibility and visual-QA checklist.
-- `docs/measurement-and-intake-ops.md` for campaign attribution, conversion events, readiness checks and the end-to-end intake test.
+- `docs/measurement-and-intake-ops.md` for Vercel handoff, campaign attribution, conversion events, readiness checks and end-to-end intake verification.
 
 ## Public claims policy
 

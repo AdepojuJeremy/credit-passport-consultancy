@@ -1,0 +1,46 @@
+name: Production smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: Production or preview origin to verify, including https://
+        required: true
+        type: string
+      expect_ready:
+        description: Fail unless /api/readiness reports ready
+        required: true
+        default: true
+        type: boolean
+      submit_intake:
+        description: Send one synthetic consultation to the configured intake destination
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify deployed site
+        env:
+          ORIGIN: ${{ inputs.origin }}
+          EXPECT_READY: ${{ inputs.expect_ready }}
+          SUBMIT_INTAKE: ${{ inputs.submit_intake }}
+        run: |
+          args=("$ORIGIN")
+          if [[ "$EXPECT_READY" == "true" ]]; then
+            args+=("--expect-ready")
+          fi
+          if [[ "$SUBMIT_INTAKE" == "true" ]]; then
+            args+=("--submit-intake")
+          fi
+          node scripts/verify-production.mjs "${args[@]}"
