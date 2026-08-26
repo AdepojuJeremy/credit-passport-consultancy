@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { DecisionSystem } from "@/components/decision-system";
 import { Reveal } from "@/components/reveal";
+import { creditDecisionDiagnostic } from "@/data/diagnostic";
 import { engagementPatterns } from "@/data/engagement-patterns";
 import { researchPosts } from "@/data/research-posts";
 import { sectors } from "@/data/sectors";
@@ -19,8 +20,15 @@ const marqueeItems = [
 const approach = [
   ["I", "Diagnose the system", "Map the existing decision chain, data, incentives, policies, constraints and failure modes before recommending change."],
   ["II", "Design the intervention", "Build the smallest rigorous change that can improve decisions: policy, analytics, model, workflow or infrastructure."],
-  ["III", "Measure the outcome", "Validate against business outcomes such as approval lift, default performance, calibration, explainability and operational latency."],
+  ["III", "Measure the outcome", "Validate against business outcomes such as approval quality, default performance, calibration, explainability and operational latency."],
 ];
+
+const nextSteps = [
+  ["01", "Share the decision problem", "Use the public intake to describe the institution, the lending decision that needs attention and the outcome you want to improve. Do not send borrower PII or confidential datasets."],
+  ["02", "Establish fit and scope", "We determine whether the constraint is primarily policy, analytics, data, models, workflow, infrastructure—or whether a broader diagnostic is the right first step."],
+  ["03", "Agree the evidence boundary", "If deeper review is warranted, define the data, permissions, secure transfer method, outcome definitions and evidence required before analysis begins."],
+  ["04", "Start with an explicit intervention", "The engagement begins with a defined decision problem, deliverables and validation criteria rather than an open-ended technology build."],
+] as const;
 
 export default function Home() {
   return (
@@ -42,11 +50,11 @@ export default function Home() {
               We help lenders, fintechs and financial institutions improve credit, risk, data and decision systems using rigorous analysis, AI and decision science.
             </p>
             <div className="flex flex-wrap items-start gap-3 md:justify-end">
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-blue)] px-5 py-3 text-sm text-white transition-transform hover:-translate-y-0.5">
-                Start a conversation <ArrowUpRight size={15} aria-hidden="true" />
+              <Link href="/diagnostic" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-blue)] px-5 py-3 text-sm text-white transition-transform hover:-translate-y-0.5">
+                Start with a diagnostic <ArrowUpRight size={15} aria-hidden="true" />
               </Link>
-              <Link href="/research" className="inline-flex items-center gap-2 rounded-full border hairline bg-white/50 px-5 py-3 text-sm transition-colors hover:bg-white">
-                Explore research
+              <Link href="/sectors" className="inline-flex items-center gap-2 rounded-full border hairline bg-white/50 px-5 py-3 text-sm transition-colors hover:bg-white">
+                See who we work with
               </Link>
             </div>
           </Reveal>
@@ -63,10 +71,48 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="border-b hairline bg-[color:var(--panel)]">
+        <div className="site-container py-24 md:py-36">
+          <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
+            <div className="md:sticky md:top-28 md:self-start">
+              <p className="kicker">01 / First engagement</p>
+              <p className="mt-5 max-w-56 text-sm leading-6 text-[color:var(--muted)]">
+                For institutions that know the decision system needs to improve but do not yet know which intervention is justified.
+              </p>
+            </div>
+            <div>
+              <Reveal>
+                <h2 className="section-title max-w-4xl">Start by finding the real constraint.</h2>
+              </Reveal>
+              <p className="mt-7 max-w-3xl text-lg leading-7 text-[color:var(--muted)]">
+                {creditDecisionDiagnostic.description} The purpose is not to sell a model. It is to establish what should change, why, and what evidence would demonstrate improvement.
+              </p>
+              <div className="mt-14 grid gap-px bg-[color:var(--line-strong)] sm:grid-cols-2 lg:grid-cols-3">
+                {creditDecisionDiagnostic.reviewAreas.map(([number, title, copy]) => (
+                  <article key={number} className="min-h-64 bg-[color:var(--surface)] p-6">
+                    <span className="kicker text-[color:var(--brand-blue)]">{number}</span>
+                    <h3 className="mt-12 font-[family-name:var(--font-manrope)] text-xl font-semibold tracking-[-0.04em]">{title}</h3>
+                    <p className="mt-4 text-sm leading-6 text-[color:var(--muted)]">{copy}</p>
+                  </article>
+                ))}
+              </div>
+              <div className="mt-8 flex flex-wrap items-center gap-5">
+                <Link href="/diagnostic" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--foreground)] px-5 py-3 text-sm font-medium text-white hover:bg-[color:var(--brand-blue)]">
+                  Explore the diagnostic <ArrowUpRight size={15} aria-hidden="true" />
+                </Link>
+                <Link href="/contact" className="inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--brand-blue)]">
+                  I already know the scope <ArrowRight size={15} aria-hidden="true" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="site-container py-24 md:py-36">
         <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
           <div className="md:sticky md:top-28 md:self-start">
-            <p className="kicker">01 / Capabilities</p>
+            <p className="kicker">02 / Capabilities</p>
             <p className="mt-5 max-w-52 text-sm leading-6 text-[color:var(--muted)]">
               Advisory and implementation across the full lending-decision lifecycle.
             </p>
@@ -98,7 +144,7 @@ export default function Home() {
 
       <section className="border-y hairline bg-[color:var(--panel)]">
         <div className="site-container py-24 md:py-36">
-          <p className="kicker">02 / Our approach</p>
+          <p className="kicker">03 / Our approach</p>
           <Reveal className="mt-8 max-w-4xl">
             <h2 className="section-title">Research first. Intervention second. Measurement always.</h2>
           </Reveal>
@@ -122,7 +168,7 @@ export default function Home() {
       <section className="inverse-grid bg-[color:var(--inverse)] text-[color:var(--inverse-foreground)]">
         <div className="site-container py-24 md:py-40">
           <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
-            <p className="kicker text-white/45">03 / Decision intelligence</p>
+            <p className="kicker text-white/45">04 / Decision intelligence</p>
             <div>
               <Reveal>
                 <h2 className="section-title max-w-5xl">Models predict.<br />Policies decide.</h2>
@@ -139,7 +185,7 @@ export default function Home() {
       <section className="site-container py-24 md:py-36">
         <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
           <div>
-            <p className="kicker">04 / Who we work with</p>
+            <p className="kicker">05 / Who we work with</p>
             <p className="mt-5 max-w-56 text-sm leading-6 text-[color:var(--muted)]">
               Institutions where credit decisions materially affect growth, losses, customer access or operational risk.
             </p>
@@ -150,22 +196,27 @@ export default function Home() {
             </Reveal>
             <div className="mt-16 grid gap-px bg-[color:var(--line-strong)] sm:grid-cols-2">
               {sectors.map((sector) => (
-                <article key={sector.number} className="min-h-80 bg-[color:var(--surface)] p-6">
-                  <span className="kicker text-[color:var(--brand-blue)]">{sector.number}</span>
-                  <h3 className="mt-14 font-[family-name:var(--font-manrope)] text-2xl font-semibold tracking-[-0.045em]">{sector.title}</h3>
-                  <p className="mt-4 max-w-md text-sm leading-6 text-[color:var(--muted)]">{sector.description}</p>
-                  <div className="mt-8 flex flex-wrap gap-2">
-                    {sector.problems.map((problem) => (
-                      <span key={problem} className="rounded-full border hairline bg-[color:var(--panel)] px-3 py-2 text-xs text-[color:var(--muted)]">
-                        {problem}
-                      </span>
-                    ))}
+                <Link key={sector.number} href={`/sectors/${sector.slug}`} className="group flex min-h-80 flex-col bg-[color:var(--surface)] p-6 transition-colors hover:bg-white">
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="kicker text-[color:var(--brand-blue)]">{sector.number}</span>
+                    <ArrowUpRight className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={16} aria-hidden="true" />
                   </div>
-                </article>
+                  <div className="mt-auto">
+                    <h3 className="font-[family-name:var(--font-manrope)] text-2xl font-semibold tracking-[-0.045em]">{sector.title}</h3>
+                    <p className="mt-4 max-w-md text-sm leading-6 text-[color:var(--muted)]">{sector.description}</p>
+                    <div className="mt-8 flex flex-wrap gap-2">
+                      {sector.problems.map((problem) => (
+                        <span key={problem} className="rounded-full border hairline bg-[color:var(--panel)] px-3 py-2 text-xs text-[color:var(--muted)]">
+                          {problem}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
-            <Link href="/contact" className="mt-8 inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--brand-blue)]">
-              Discuss your institution <ArrowRight size={15} aria-hidden="true" />
+            <Link href="/sectors" className="mt-8 inline-flex items-center gap-2 text-sm font-medium hover:text-[color:var(--brand-blue)]">
+              Explore sector pathways <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -175,7 +226,7 @@ export default function Home() {
         <div className="site-container py-24 md:py-36">
           <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
             <div>
-              <p className="kicker">05 / Research</p>
+              <p className="kicker">06 / Research</p>
               <p className="mt-5 max-w-52 text-sm leading-6 text-[color:var(--muted)]">
                 Practitioner research on the architecture and evaluation of consequential decisions.
               </p>
@@ -212,7 +263,7 @@ export default function Home() {
       <section className="site-container py-24 md:py-36">
         <div className="grid gap-10 md:grid-cols-[0.65fr_2fr]">
           <div>
-            <p className="kicker">06 / Selected work</p>
+            <p className="kicker">07 / Selected work</p>
             <p className="mt-5 max-w-52 text-sm leading-6 text-[color:var(--muted)]">
               Engagement patterns published with explicit evidence status.
             </p>
@@ -252,16 +303,48 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="border-y hairline bg-[color:var(--inverse)] text-[color:var(--inverse-foreground)]">
+        <div className="site-container py-24 md:py-36">
+          <div className="grid gap-12 md:grid-cols-[0.65fr_2fr]">
+            <div>
+              <p className="kicker text-white/45">08 / What happens next</p>
+              <p className="mt-5 max-w-56 text-sm leading-6 text-white/55">
+                A clear handoff from public enquiry to evidence-based consulting scope.
+              </p>
+            </div>
+            <div>
+              <Reveal>
+                <h2 className="section-title max-w-4xl">No black box between interest and engagement.</h2>
+              </Reveal>
+              <div className="mt-16 border-t border-white/20">
+                {nextSteps.map(([number, title, copy]) => (
+                  <div key={number} className="grid gap-5 border-b border-white/20 py-7 md:grid-cols-[64px_0.8fr_1.4fr]">
+                    <span className="kicker text-[color:var(--brand-mint)]">{number}</span>
+                    <h3 className="font-[family-name:var(--font-manrope)] text-xl font-semibold tracking-[-0.035em]">{title}</h3>
+                    <p className="max-w-2xl text-sm leading-6 text-white/55">{copy}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-[color:var(--brand-blue)] text-white">
         <div className="site-container py-28 md:py-44">
-          <p className="kicker text-white/65">07 / Start here</p>
+          <p className="kicker text-white/65">09 / Start here</p>
           <div className="mt-8 flex flex-col gap-10 border-t border-white/30 pt-8 md:flex-row md:items-end md:justify-between">
             <Reveal className="max-w-5xl">
-              <h2 className="section-title">Have a difficult decision problem?</h2>
+              <h2 className="section-title">Know something in the decision system needs to change?</h2>
             </Reveal>
-            <Link href="/contact" className="inline-flex w-fit shrink-0 items-center gap-3 rounded-full bg-white px-6 py-4 text-sm font-medium text-[color:var(--brand-indigo)] transition-transform hover:-translate-y-0.5">
-              Let&apos;s examine it <ArrowUpRight size={16} aria-hidden="true" />
-            </Link>
+            <div className="flex shrink-0 flex-wrap gap-3">
+              <Link href="/diagnostic" className="inline-flex w-fit items-center gap-3 rounded-full bg-white px-6 py-4 text-sm font-medium text-[color:var(--brand-indigo)] transition-transform hover:-translate-y-0.5">
+                Start with the diagnostic <ArrowUpRight size={16} aria-hidden="true" />
+              </Link>
+              <Link href="/contact" className="inline-flex w-fit items-center gap-3 rounded-full border border-white/40 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-white/10">
+                Contact us directly
+              </Link>
+            </div>
           </div>
         </div>
       </section>
