@@ -11,7 +11,7 @@ export function SiteHeader() {
         <Link href="/" aria-label="CreditPassport Consulting home" className="min-w-0">
           <BrandLockup />
         </Link>
-        <nav aria-label="Primary navigation" className="hidden items-center gap-6 text-sm md:flex">
+        <nav aria-label="Primary navigation" className="hidden items-center gap-6 text-sm lg:flex">
           {navigation.map((item) => (
             <Link key={item.href} href={item.href} className="transition-opacity duration-150 hover:opacity-55">
               {item.label}
@@ -20,7 +20,7 @@ export function SiteHeader() {
         </nav>
         <Link
           href="/diagnostic"
-          className="hidden items-center gap-2 rounded-full bg-[color:var(--foreground)] px-4 py-2 text-sm text-white transition-colors duration-150 hover:bg-[color:var(--brand-blue)] md:inline-flex"
+          className="hidden items-center gap-2 rounded-full bg-[color:var(--foreground)] px-4 py-2 text-sm text-white transition-colors duration-150 hover:bg-[color:var(--brand-blue)] lg:inline-flex"
         >
           Start with a diagnostic <ArrowUpRight size={14} aria-hidden="true" />
         </Link>
