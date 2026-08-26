@@ -47,11 +47,18 @@ export function MobileNav() {
               ))}
             </div>
             <Link
-              href="/contact"
+              href="/diagnostic"
               onClick={() => setOpen(false)}
               className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[color:var(--brand-blue)] px-5 py-3 text-sm font-medium text-white"
             >
-              Work with us
+              Start with a diagnostic
+            </Link>
+            <Link
+              href="/contact"
+              onClick={() => setOpen(false)}
+              className="mt-2 inline-flex w-full items-center justify-center rounded-full border hairline bg-[color:var(--surface)] px-5 py-3 text-sm font-medium"
+            >
+              Contact CreditPassport
             </Link>
           </nav>
         </div>
