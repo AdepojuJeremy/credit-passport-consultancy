@@ -47,7 +47,7 @@ export default function ConsultingPage() {
               <Link href="/diagnostic" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-mint)] px-6 py-3 text-sm font-medium text-[#081a3a]">
                 See the diagnostic <ArrowUpRight size={15} aria-hidden="true" />
               </Link>
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm text-white">
+              <Link href="/contact?from=consulting" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm text-white">
                 Discuss a specific brief
               </Link>
             </div>
