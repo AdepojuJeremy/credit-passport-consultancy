@@ -117,6 +117,9 @@ export function researchArticleStructuredData(post: ResearchPost) {
     url: absoluteSiteUrl(`/research/${post.slug}`),
     articleSection: post.category,
     genre: "Practitioner research note",
+    keywords: post.keywords.join(", "),
+    citation: post.references.map((reference) => reference.url),
+    isPartOf: { "@id": `${getSiteUrl()}/#website` },
     inLanguage: "en",
     author: {
       "@type": "Organization",
