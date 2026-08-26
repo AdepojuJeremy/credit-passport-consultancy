@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Manrope } from "next/font/google";
 import "./globals.css";
+import { HeroMotionLayer } from "@/components/hero-motion-layer";
 import { JsonLd } from "@/components/json-ld";
 import { MeasurementProvider } from "@/components/measurement-provider";
 import { ScrollProgress } from "@/components/scroll-progress";
@@ -93,6 +94,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ScrollProgress />
         <SiteHeader />
         <main id="main-content">{children}</main>
+        <HeroMotionLayer />
         <SiteFooter />
       </body>
     </html>
