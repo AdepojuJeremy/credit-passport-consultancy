@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { creditDecisionDiagnostic } from "@/data/diagnostic";
 import { services } from "@/data/services";
 
 export const metadata: Metadata = {
@@ -26,6 +27,31 @@ export default function ConsultingPage() {
           <p className="mt-8 max-w-3xl text-lg leading-7 text-[color:var(--muted)]">
             We work with lenders, fintechs and financial institutions on credit policy, risk, data, models and the infrastructure connecting them. Engagements begin with the decision problem—not a predetermined model or technology stack.
           </p>
+        </div>
+      </section>
+
+      <section className="border-b hairline bg-[color:var(--inverse)] text-[color:var(--inverse-foreground)]">
+        <div className="site-container grid gap-10 py-20 lg:grid-cols-[0.55fr_1.45fr] md:py-28">
+          <div>
+            <p className="kicker text-[color:var(--brand-mint)]">Flagship first engagement</p>
+            <p className="mt-5 max-w-sm text-sm leading-6 text-white/55">
+              Use this when the institution knows the decision system needs to improve but the right intervention is not yet obvious.
+            </p>
+          </div>
+          <div>
+            <h2 className="max-w-4xl font-[family-name:var(--font-manrope)] text-4xl font-semibold tracking-[-0.05em] md:text-6xl">
+              {creditDecisionDiagnostic.title}
+            </h2>
+            <p className="mt-7 max-w-3xl text-base leading-7 text-white/60">{creditDecisionDiagnostic.description}</p>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link href="/diagnostic" className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-mint)] px-6 py-3 text-sm font-medium text-[#081a3a]">
+                See the diagnostic <ArrowUpRight size={15} aria-hidden="true" />
+              </Link>
+              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm text-white">
+                Discuss a specific brief
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -84,12 +110,17 @@ export default function ConsultingPage() {
               Bring us the decision problem.
             </h2>
           </div>
-          <Link
-            href="/contact"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-blue)] px-6 py-3 text-sm font-medium text-white md:mt-0"
-          >
-            Work with us <ArrowUpRight size={15} />
-          </Link>
+          <div className="mt-8 flex flex-wrap gap-3 md:mt-0 md:justify-end">
+            <Link
+              href="/diagnostic"
+              className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-blue)] px-6 py-3 text-sm font-medium text-white"
+            >
+              Start with a diagnostic <ArrowUpRight size={15} aria-hidden="true" />
+            </Link>
+            <Link href="/sectors" className="inline-flex items-center gap-2 rounded-full border hairline px-6 py-3 text-sm font-medium">
+              Browse by sector <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </section>
     </>
