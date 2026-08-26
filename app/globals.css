@@ -107,6 +107,7 @@ select {
     linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 56px 56px;
+  animation: inverse-grid-drift 22s linear infinite;
 }
 
 .display {
@@ -140,13 +141,20 @@ select {
 .brand-rule {
   height: 3px;
   width: 64px;
+  transform-origin: left center;
   background: linear-gradient(90deg, var(--brand-blue), var(--brand-mint));
+  animation: brand-rule-sweep 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee 32s linear infinite;
+  animation: marquee 30s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
 }
 
 .capability-row {
@@ -178,6 +186,22 @@ select {
   to { transform: translateX(-50%); }
 }
 
+@keyframes brand-rule-sweep {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes inverse-grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 56px 0, 0 56px; }
+}
+
 @media (max-width: 767px) {
   .site-container {
     width: min(100% - 32px, 1200px);
@@ -201,7 +225,9 @@ select {
     transition-duration: 0.01ms !important;
   }
 
-  .marquee-track {
+  .marquee-track,
+  .inverse-grid,
+  .brand-rule {
     animation: none;
   }
 }
