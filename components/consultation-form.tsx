@@ -10,6 +10,10 @@ import {
   getCampaignAttribution,
   trackMeasurementEvent,
 } from "@/components/measurement-provider";
+import {
+  browserRequestHeaderName,
+  browserRequestHeaderValue,
+} from "@/lib/public-api-guards";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -43,7 +47,10 @@ export function ConsultationForm({
     try {
       const response = await fetch("/api/consultation", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          [browserRequestHeaderName]: browserRequestHeaderValue,
+        },
         body: JSON.stringify(payload),
       });
 
