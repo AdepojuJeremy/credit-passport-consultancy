@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 const requiredFields = ["name", "email", "institution", "role", "institutionType", "problemType", "problem", "desiredOutcome"] as const;
+const maxRequestBytes = 50_000;
 
 type ConsultationPayload = Record<string, unknown>;
 
@@ -10,6 +11,11 @@ function cleanString(value: unknown, maxLength = 4000) {
 }
 
 export async function POST(request: Request) {
+  const contentLength = Number(request.headers.get("content-length") ?? "0");
+  if (Number.isFinite(contentLength) && contentLength > maxRequestBytes) {
+    return NextResponse.json({ message: "The enquiry payload is too large." }, { status: 413 });
+  }
+
   let body: ConsultationPayload;
 
   try {
@@ -65,6 +71,7 @@ export async function POST(request: Request) {
       ...cleaned,
     }),
     cache: "no-store",
+    signal: AbortSignal.timeout(8_000),
   }).catch(() => null);
 
   if (!upstream?.ok) {
