@@ -8,12 +8,11 @@ import {
   getWebhookUrl,
   guardPublicJsonRequest,
   publicApiResponseHeaders,
+  readBoundedJsonBody,
 } from "@/lib/public-api-guards";
 
 const maxRequestBytes = 12_000;
 const allowedMetadataKeys = ["context", "sourceContext", "result"] as const;
-
-type MeasurementPayload = Record<string, unknown>;
 
 function cleanMetadata(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
@@ -47,18 +46,14 @@ export async function POST(request: Request) {
     return jsonResponse({ message: guard.message }, guard.status);
   }
 
-  const contentLength = Number(request.headers.get("content-length") ?? "0");
-  if (Number.isFinite(contentLength) && contentLength > maxRequestBytes) {
-    return jsonResponse({ message: "Measurement payload is too large." }, 413);
+  const parsed = await readBoundedJsonBody(request, maxRequestBytes);
+  if (!parsed.ok) {
+    return parsed.reason === "too_large"
+      ? jsonResponse({ message: "Measurement payload is too large." }, 413)
+      : jsonResponse({ message: "Invalid measurement payload." }, 400);
   }
 
-  let body: MeasurementPayload;
-  try {
-    body = (await request.json()) as MeasurementPayload;
-  } catch {
-    return jsonResponse({ message: "Invalid measurement payload." }, 400);
-  }
-
+  const body = parsed.body;
   const event = normalizeMeasurementEvent(body.event);
   if (!event) {
     return jsonResponse({ message: "Unknown measurement event." }, 400);
