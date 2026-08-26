@@ -6,6 +6,10 @@ import {
   consultationProblemTypes,
   type ConsultationContext,
 } from "@/lib/consultation-context";
+import {
+  getCampaignAttribution,
+  trackMeasurementEvent,
+} from "@/components/measurement-provider";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -27,7 +31,14 @@ export function ConsultationForm({
 
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const payload = Object.fromEntries(formData.entries());
+    const payload = {
+      ...Object.fromEntries(formData.entries()),
+      campaign: getCampaignAttribution(),
+    };
+
+    trackMeasurementEvent("consultation_submit_attempt", { sourceContext });
+
+    let resultCode = "network";
 
     try {
       const response = await fetch("/api/consultation", {
@@ -36,6 +47,7 @@ export function ConsultationForm({
         body: JSON.stringify(payload),
       });
 
+      resultCode = String(response.status);
       const result = (await response.json().catch(() => null)) as { message?: string } | null;
 
       if (!response.ok) {
@@ -45,9 +57,11 @@ export function ConsultationForm({
       form.reset();
       setStatus("success");
       setMessage("Your enquiry has been submitted. The team can now review the decision problem and context you provided.");
+      trackMeasurementEvent("consultation_submit_success", { sourceContext, result: resultCode });
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "We could not submit the enquiry.");
+      trackMeasurementEvent("consultation_submit_error", { sourceContext, result: resultCode });
     }
   }
 
