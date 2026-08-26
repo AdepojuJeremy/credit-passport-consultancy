@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { JsonLd } from "@/components/json-ld";
 import { getSector, sectors } from "@/data/sectors";
 import { services, type Service } from "@/data/services";
+import { breadcrumbStructuredData } from "@/lib/structured-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -18,9 +20,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const sector = getSector(slug);
   if (!sector) return {};
 
+  const canonical = `/sectors/${sector.slug}`;
+
   return {
     title: sector.title,
     description: sector.description,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      title: sector.title,
+      description: sector.description,
+      url: canonical,
+    },
   };
 }
 
@@ -35,6 +46,14 @@ export default async function SectorPage({ params }: PageProps) {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbStructuredData([
+          { name: "Home", path: "/" },
+          { name: "Sectors", path: "/sectors" },
+          { name: sector.title, path: `/sectors/${sector.slug}` },
+        ])}
+      />
+
       <section className="section-grid border-b hairline">
         <div className="site-container py-20 md:py-32">
           <Link href="/sectors" className="inline-flex items-center gap-2 text-sm text-[color:var(--muted)] hover:text-[color:var(--foreground)]">
