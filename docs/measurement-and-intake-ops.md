@@ -1,6 +1,6 @@
 # Measurement and intake operations
 
-This document defines the current public-site funnel measurement and consultation delivery model.
+This document defines the current public-site funnel measurement, consultation delivery and production-verification model.
 
 ## Objectives
 
@@ -63,8 +63,10 @@ MEASUREMENT_WEBHOOK_BEARER_TOKEN=
 
 The deployment is considered ready for public consultation intake when:
 
-- a production site URL is configured, and
+- a production site URL is available, and
 - the consultation webhook is configured.
+
+On Vercel, the application can use `VERCEL_PROJECT_PRODUCTION_URL` as the production-site URL. `NEXT_PUBLIC_SITE_URL` remains available as an explicit override for custom hosting or a deliberately chosen canonical origin.
 
 The measurement webhook is reported separately because measurement is optional.
 
@@ -83,25 +85,80 @@ Expected ready response:
 
 A missing required runtime value returns HTTP `503` with `status: "needs_configuration"`.
 
-## End-to-end launch test
+## Vercel handoff
+
+The durable production setup should use Vercel Git integration rather than an ad-hoc file deployment.
+
+1. Import `AdepojuJeremy/credit-passport-consultancy` into the intended Vercel team.
+2. Keep the repository root as the project root and allow Vercel to detect Next.js.
+3. Use `main` as the production branch.
+4. Configure `CONSULTATION_WEBHOOK_URL` for Production. Add `CONSULTATION_WEBHOOK_BEARER_TOKEN` only if the destination requires it.
+5. Configure `MEASUREMENT_WEBHOOK_URL` and its bearer token only if a measurement destination has been approved.
+6. Deploy `main`.
+7. Run the production smoke verification below before treating the intake as live.
+
+The current connected Vercel automation surface does not expose a working Git-import/project-creation action, so the initial Git import is a one-time Vercel dashboard action. Subsequent pushes to `main` should use the normal Git deployment path.
+
+## Production smoke verification
+
+The repository contains a dependency-free Node 22 smoke test.
+
+Basic public-site verification:
+
+```bash
+npm run verify:production -- https://your-production-origin.example
+```
+
+Require the runtime to report fully ready:
+
+```bash
+npm run verify:production -- https://your-production-origin.example --expect-ready
+```
+
+The smoke test checks:
+
+- homepage, Consulting, Diagnostic, Sectors, Research, Selected Work, About, Contact and Privacy routes,
+- `robots.txt`,
+- `sitemap.xml`,
+- the generated Open Graph image,
+- the configured security headers, and
+- `/api/readiness`.
+
+A manual GitHub Actions workflow named **Production smoke** exposes the same test through `workflow_dispatch`, so production can be checked without a local environment.
+
+## Synthetic end-to-end intake test
 
 Use synthetic institutional information only. Do not use a real borrower or confidential client dataset.
 
-1. Open a new browser tab with a tagged URL such as:
+The production verifier can intentionally submit one safe synthetic enquiry:
 
-   `/diagnostic?utm_source=launch-test&utm_medium=manual&utm_campaign=intake-e2e`
+```bash
+npm run verify:production -- https://your-production-origin.example --expect-ready --submit-intake
+```
 
+`--submit-intake` is deliberately opt-in because it sends a real request through the configured `CONSULTATION_WEBHOOK_URL`.
+
+The synthetic payload identifies itself as launch verification, contains no borrower/customer data and includes a synthetic UTM campaign.
+
+After running it, confirm the consultation destination receives:
+
+- the synthetic form fields,
+- normalized `sourceContext`,
+- the bounded campaign object,
+- `source: credit-passport-consultancy`, and
+- `submittedAt`.
+
+If measurement is configured, confirm the measurement destination receives the expected conversion events and does **not** receive form text.
+
+## Manual browser confirmation
+
+After the automated smoke test passes:
+
+1. Open a new browser tab with a tagged URL such as `/diagnostic?utm_source=launch-test&utm_medium=manual&utm_campaign=intake-e2e`.
 2. Move from the Diagnostic to the consultation form.
 3. Confirm the form preserves recognized CreditPassport context.
-4. Submit a synthetic enquiry containing no borrower PII or confidential production information.
-5. Confirm the consultation destination receives:
-   - the form fields,
-   - normalized `sourceContext`,
-   - the bounded campaign object,
-   - `source: credit-passport-consultancy`, and
-   - `submittedAt`.
-6. If measurement is configured, confirm the measurement destination receives the expected conversion sequence and does **not** receive form text.
-7. Confirm `/api/readiness` returns HTTP `200` after production environment configuration.
+4. Confirm the public form contains no request for borrower PII or confidential production data.
+5. Check desktop and mobile navigation, focus states and the final CTA journey.
 
 ## Operational review before launch
 
