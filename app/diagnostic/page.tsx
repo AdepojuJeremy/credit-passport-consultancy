@@ -1,13 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
+import { JsonLd } from "@/components/json-ld";
 import { creditDecisionDiagnostic } from "@/data/diagnostic";
 import { getSector } from "@/data/sectors";
+import { breadcrumbStructuredData, diagnosticStructuredData } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Credit Decision Diagnostic",
   description:
     "A structured review of credit policy, decision data, portfolio evidence, models and infrastructure before a lender changes its underwriting system.",
+  alternates: { canonical: "/diagnostic" },
+  openGraph: {
+    type: "website",
+    title: "Credit Decision Diagnostic",
+    description:
+      "A structured review of credit policy, decision data, portfolio evidence, models and infrastructure before a lender changes its underwriting system.",
+    url: "/diagnostic",
+  },
 };
 
 function NumberedList({ items }: { items: ReadonlyArray<string> }) {
@@ -37,6 +47,15 @@ export default async function DiagnosticPage({ searchParams }: DiagnosticPagePro
 
   return (
     <>
+      <JsonLd data={diagnosticStructuredData()} />
+      <JsonLd
+        data={breadcrumbStructuredData([
+          { name: "Home", path: "/" },
+          { name: "Consulting", path: "/consulting" },
+          { name: "Credit Decision Diagnostic", path: "/diagnostic" },
+        ])}
+      />
+
       <section className="section-grid border-b hairline">
         <div className="site-container py-20 md:py-32">
           <p className="kicker text-[color:var(--brand-blue)]">Flagship engagement</p>
