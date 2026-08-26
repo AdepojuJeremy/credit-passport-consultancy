@@ -231,7 +231,7 @@ export function DecisionGlobe({ activeStage }: DecisionGlobeProps) {
         </div>
         <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-white/55">
           <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[color:var(--brand-mint)] shadow-[0_0_16px_rgba(0,230,177,0.7)]" />
-          Live trace
+          Active trace
         </span>
       </figcaption>
 
