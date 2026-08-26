@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "motion/react";
+import { motion, useReducedMotion, useSpring, useTransform } from "motion/react";
 
 type DecisionGlobeProps = {
   activeStage: number;
@@ -104,6 +104,10 @@ function drawArc(
 export function DecisionGlobe({ activeStage }: DecisionGlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduceMotion = useReducedMotion();
+  const pointerX = useSpring(0, { stiffness: 100, damping: 22, mass: 0.45 });
+  const pointerY = useSpring(0, { stiffness: 100, damping: 22, mass: 0.45 });
+  const rotateY = useTransform(pointerX, [-1, 1], [-3.5, 3.5]);
+  const rotateX = useTransform(pointerY, [-1, 1], [3, -3]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -218,28 +222,41 @@ export function DecisionGlobe({ activeStage }: DecisionGlobeProps) {
   }, [activeStage, reduceMotion]);
 
   return (
-    <figure
-      className="relative min-h-[360px] overflow-hidden rounded-[var(--radius-xl)] border border-white/15 bg-white/[0.025] md:min-h-[430px]"
-      aria-label="Illustrative animated decision network focused on African financial systems"
-    >
-      <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
+    <div className="[perspective:1000px]">
+      <motion.figure
+        className="relative min-h-[360px] overflow-hidden rounded-[var(--radius-xl)] border border-white/15 bg-white/[0.025] md:min-h-[430px]"
+        aria-label="Illustrative animated decision network focused on African financial systems"
+        style={{ rotateX: reduceMotion ? 0 : rotateX, rotateY: reduceMotion ? 0 : rotateY, transformStyle: "preserve-3d" }}
+        onPointerMove={(event) => {
+          if (reduceMotion) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          pointerX.set(((event.clientX - rect.left) / rect.width) * 2 - 1);
+          pointerY.set(((event.clientY - rect.top) / rect.height) * 2 - 1);
+        }}
+        onPointerLeave={() => {
+          pointerX.set(0);
+          pointerY.set(0);
+        }}
+      >
+        <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
 
-      <figcaption className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
-        <div>
-          <p className="kicker text-white/45">Decision network</p>
-          <p className="mt-1 text-xs text-white/65">Illustrative system view · Africa</p>
+        <figcaption className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
+          <div>
+            <p className="kicker text-white/45">Decision network</p>
+            <p className="mt-1 text-xs text-white/65">Illustrative system view · Africa</p>
+          </div>
+          <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-white/55">
+            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[color:var(--brand-mint)] shadow-[0_0_16px_rgba(0,230,177,0.7)]" />
+            Active trace
+          </span>
+        </figcaption>
+
+        <div className="absolute inset-x-5 bottom-5 z-10 grid grid-cols-3 gap-2 text-[10px] uppercase tracking-[0.1em] text-white/50">
+          <span className="border-t border-white/15 pt-3">Evidence</span>
+          <span className="border-t border-white/15 pt-3 text-center">Policy</span>
+          <span className="border-t border-white/15 pt-3 text-right">Outcomes</span>
         </div>
-        <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-white/55">
-          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[color:var(--brand-mint)] shadow-[0_0_16px_rgba(0,230,177,0.7)]" />
-          Active trace
-        </span>
-      </figcaption>
-
-      <div className="absolute inset-x-5 bottom-5 z-10 grid grid-cols-3 gap-2 text-[10px] uppercase tracking-[0.1em] text-white/50">
-        <span className="border-t border-white/15 pt-3">Evidence</span>
-        <span className="border-t border-white/15 pt-3 text-center">Policy</span>
-        <span className="border-t border-white/15 pt-3 text-right">Outcomes</span>
-      </div>
-    </figure>
+      </motion.figure>
+    </div>
   );
 }
