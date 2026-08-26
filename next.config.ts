@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
+import { isIndexableDeployment } from "./lib/site-url";
 
 const isDev = process.env.NODE_ENV === "development";
+const indexable = isIndexableDeployment();
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
@@ -26,6 +28,7 @@ const securityHeaders = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   { key: "X-DNS-Prefetch-Control", value: "off" },
   { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+  ...(indexable ? [] : [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }]),
 ];
 
 const nextConfig: NextConfig = {
