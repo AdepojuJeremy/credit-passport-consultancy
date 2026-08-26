@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { normalizeConsultationSourceContext } from "@/lib/consultation-context";
 
 const requiredFields = ["name", "email", "institution", "role", "institutionType", "problemType", "problem", "desiredOutcome"] as const;
 const maxRequestBytes = 50_000;
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
     problem: cleanString(body.problem),
     dataAvailable: cleanString(body.dataAvailable),
     desiredOutcome: cleanString(body.desiredOutcome),
+    sourceContext: normalizeConsultationSourceContext(body.sourceContext),
   };
 
   const missing = requiredFields.filter((field) => !cleaned[field]);
