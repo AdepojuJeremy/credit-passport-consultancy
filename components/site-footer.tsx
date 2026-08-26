@@ -3,6 +3,8 @@ import { BrandLockup } from "@/components/brand-lockup";
 
 const practiceLinks = [
   { label: "Consulting", href: "/consulting" },
+  { label: "Credit Decision Diagnostic", href: "/diagnostic" },
+  { label: "Sectors", href: "/sectors" },
   { label: "Research", href: "/research" },
   { label: "Selected work", href: "/case-studies" },
 ];
