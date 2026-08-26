@@ -23,12 +23,16 @@ const sections = [
     copy: "Context attached to an enquiry is limited to recognized CreditPassport paths such as the Diagnostic, a named sector or a named consulting capability. The intake does not add arbitrary browser history or free-form referrer data to the enquiry payload.",
   },
   {
+    title: "Campaign and conversion measurement",
+    copy: "If the landing URL contains standard UTM campaign parameters, the site may retain utm_source, utm_medium, utm_campaign, utm_content and utm_term for the current browser tab or session and attach them to named conversion events or a consultation enquiry. This implementation uses session storage rather than cookies, does not fingerprint the browser, does not capture arbitrary referrer URLs and does not send consultation-form text to the measurement endpoint.",
+  },
+  {
     title: "Delivery infrastructure",
-    copy: "The website forwards consultation enquiries from a server-side route to a configured business intake destination. The destination is supplied through deployment configuration rather than exposed in browser code.",
+    copy: "The website forwards consultation enquiries from a server-side route to a configured business intake destination. Conversion events can separately be forwarded to a configured measurement destination. Both destinations are supplied through deployment configuration rather than exposed in browser code.",
   },
   {
     title: "Retention and access",
-    copy: "Enquiry information should be retained only for legitimate business follow-up and record-keeping needs, with access limited to people or service providers involved in handling the enquiry. Production retention and deletion procedures should be reviewed as part of launch operations.",
+    copy: "Enquiry and measurement information should be retained only for legitimate business follow-up, funnel analysis and record-keeping needs, with access limited to people or service providers involved in those purposes. Production retention and deletion procedures should be reviewed as part of launch operations.",
   },
 ];
 

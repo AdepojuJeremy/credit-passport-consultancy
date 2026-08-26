@@ -15,13 +15,17 @@ The operating loop is:
 - `/` — consultancy-first homepage
 - `/consulting` — six consulting capabilities
 - `/consulting/[slug]` — detailed capability pages with questions, work, outputs and measures
+- `/diagnostic` — flagship Credit Decision Diagnostic
+- `/sectors` — buyer-specific sector pathways
+- `/sectors/[slug]` — sector-specific decision questions and relevant capabilities
 - `/research` — practitioner research-note index
 - `/research/[slug]` — source-grounded research notes
 - `/case-studies` — evidence-led selected work / engagement patterns
 - `/case-studies/[slug]` — anonymized engagement pattern pages with explicit evidence status
 - `/about` — operating model, founders and principles
-- `/contact` — structured consultation intake
+- `/contact` — contextual structured consultation intake
 - `/privacy` — current website intake/privacy boundary
+- `/api/readiness` — boolean runtime-configuration readiness check
 - `/robots.txt` — generated crawler policy
 - `/sitemap.xml` — generated public route index
 - `/opengraph-image` — generated branded social preview
@@ -59,15 +63,22 @@ Copy `.env.example` to `.env.local` for development as needed.
 NEXT_PUBLIC_SITE_URL=
 CONSULTATION_WEBHOOK_URL=
 CONSULTATION_WEBHOOK_BEARER_TOKEN=
+MEASUREMENT_WEBHOOK_URL=
+MEASUREMENT_WEBHOOK_BEARER_TOKEN=
 ```
 
 `NEXT_PUBLIC_SITE_URL` should be the final HTTPS production origin when deployed. The consultation form is not operational until a secure webhook destination is configured.
+
+The measurement webhook is optional. When configured, it receives only named conversion events, route path, bounded session-scoped UTM values and limited event metadata. It does not receive consultation-form text.
 
 ## Deployment
 
 The application is intended for a standard Next.js deployment, with Vercel as the default hosting target. Use `main` for production and pull requests for previews.
 
-See `docs/launch-readiness.md` for the deployment, indexing, security, accessibility and visual-QA checklist.
+See:
+
+- `docs/launch-readiness.md` for the deployment, indexing, security, accessibility and visual-QA checklist.
+- `docs/measurement-and-intake-ops.md` for campaign attribution, conversion events, readiness checks and the end-to-end intake test.
 
 ## Public claims policy
 
