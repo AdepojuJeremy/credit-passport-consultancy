@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { JsonLd } from "@/components/json-ld";
 import { getService, services } from "@/data/services";
+import { breadcrumbStructuredData, serviceStructuredData } from "@/lib/structured-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -17,9 +19,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const service = getService(slug);
   if (!service) return {};
 
+  const canonical = `/consulting/${service.slug}`;
+
   return {
     title: service.title,
     description: service.description,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      title: service.title,
+      description: service.description,
+      url: canonical,
+    },
   };
 }
 
@@ -46,6 +57,15 @@ export default async function ServicePage({ params }: PageProps) {
 
   return (
     <>
+      <JsonLd data={serviceStructuredData(service)} />
+      <JsonLd
+        data={breadcrumbStructuredData([
+          { name: "Home", path: "/" },
+          { name: "Consulting", path: "/consulting" },
+          { name: service.title, path: `/consulting/${service.slug}` },
+        ])}
+      />
+
       <section className="section-grid border-b hairline">
         <div className="site-container py-20 md:py-32">
           <Link href="/consulting" className="inline-flex items-center gap-2 text-sm text-[color:var(--muted)] hover:text-[color:var(--foreground)]">
