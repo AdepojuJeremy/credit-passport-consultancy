@@ -102,13 +102,13 @@ select {
   background-size: 56px 56px;
 }
 
-#main-content > section.section-grid:first-child {
+.hero-globe-host {
   position: relative;
   isolation: isolate;
   overflow: clip;
 }
 
-#main-content > section.section-grid:first-child > .site-container {
+.hero-globe-host > .site-container {
   position: relative;
   z-index: 2;
 }
