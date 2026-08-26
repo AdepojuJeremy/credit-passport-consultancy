@@ -5,12 +5,11 @@ import {
   getWebhookUrl,
   guardPublicJsonRequest,
   publicApiResponseHeaders,
+  readBoundedJsonBody,
 } from "@/lib/public-api-guards";
 
 const requiredFields = ["name", "email", "institution", "role", "institutionType", "problemType", "problem", "desiredOutcome"] as const;
 const maxRequestBytes = 50_000;
-
-type ConsultationPayload = Record<string, unknown>;
 
 function cleanString(value: unknown, maxLength = 4000) {
   if (typeof value !== "string") return "";
@@ -30,18 +29,14 @@ export async function POST(request: Request) {
     return jsonResponse({ message: guard.message }, guard.status);
   }
 
-  const contentLength = Number(request.headers.get("content-length") ?? "0");
-  if (Number.isFinite(contentLength) && contentLength > maxRequestBytes) {
-    return jsonResponse({ message: "The enquiry payload is too large." }, 413);
+  const parsed = await readBoundedJsonBody(request, maxRequestBytes);
+  if (!parsed.ok) {
+    return parsed.reason === "too_large"
+      ? jsonResponse({ message: "The enquiry payload is too large." }, 413)
+      : jsonResponse({ message: "Invalid request payload." }, 400);
   }
 
-  let body: ConsultationPayload;
-
-  try {
-    body = (await request.json()) as ConsultationPayload;
-  } catch {
-    return jsonResponse({ message: "Invalid request payload." }, 400);
-  }
+  const body = parsed.body;
 
   if (cleanString(body.website)) {
     return jsonResponse({ ok: true });
