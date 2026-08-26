@@ -25,7 +25,7 @@ NEXT_PUBLIC_SITE_URL=https://<production-domain>
 
 `NEXT_PUBLIC_SITE_URL` controls canonical absolute URLs, structured data, sitemap/robots output and whether the deployment opts into indexing.
 
-A deployment without an explicit `NEXT_PUBLIC_SITE_URL` remains renderable but emits `noindex, nofollow` and a blocking `robots.txt`. Vercel Preview environments are also non-indexable even if an environment value is accidentally present.
+A deployment without an explicit `NEXT_PUBLIC_SITE_URL` remains renderable but emits page-level `noindex, nofollow` plus an `X-Robots-Tag` noindex response header, and it omits canonical sitemap/host advertisement from `robots.txt`. Crawlers remain able to request the public pages so they can observe the noindex instruction. Vercel Preview environments are also non-indexable even if an environment value is accidentally present.
 
 This matters when more than one Vercel project receives `main`: only the chosen canonical production project should receive `NEXT_PUBLIC_SITE_URL` in its Production environment. Secondary projects can continue to render for QA without competing with the canonical site in search.
 
@@ -104,6 +104,7 @@ The response baseline includes:
 - `Permissions-Policy` disabling unused sensitive browser capabilities
 - `Cross-Origin-Opener-Policy: same-origin`
 - `X-DNS-Prefetch-Control: off`
+- `X-Robots-Tag` on non-canonical deployments
 
 The public consultation and measurement POST endpoints additionally enforce JSON-only requests, same-origin browser provenance, actual request-body byte limits, bounded fields and HTTPS webhook destinations.
 
