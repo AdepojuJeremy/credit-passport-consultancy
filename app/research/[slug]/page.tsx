@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { JsonLd } from "@/components/json-ld";
 import { getResearchPost, researchPosts } from "@/data/research-posts";
+import { breadcrumbStructuredData, researchArticleStructuredData } from "@/lib/structured-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -17,9 +19,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = getResearchPost(slug);
   if (!post) return {};
 
+  const canonical = `/research/${post.slug}`;
+
   return {
     title: post.title,
     description: post.dek,
+    alternates: { canonical },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.dek,
+      url: canonical,
+      publishedTime: post.date,
+      section: post.category,
+    },
   };
 }
 
@@ -30,6 +43,15 @@ export default async function ResearchPostPage({ params }: PageProps) {
 
   return (
     <article>
+      <JsonLd data={researchArticleStructuredData(post)} />
+      <JsonLd
+        data={breadcrumbStructuredData([
+          { name: "Home", path: "/" },
+          { name: "Research", path: "/research" },
+          { name: post.title, path: `/research/${post.slug}` },
+        ])}
+      />
+
       <header className="section-grid border-b hairline">
         <div className="site-container py-20 md:py-32">
           <Link href="/research" className="inline-flex items-center gap-2 text-sm text-[color:var(--muted)] hover:text-[color:var(--foreground)]">
