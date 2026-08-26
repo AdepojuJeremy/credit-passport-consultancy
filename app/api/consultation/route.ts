@@ -1,33 +1,45 @@
 import { NextResponse } from "next/server";
 import { normalizeConsultationSourceContext } from "@/lib/consultation-context";
 import { normalizeCampaignAttribution } from "@/lib/measurement";
+import {
+  getWebhookUrl,
+  guardPublicJsonRequest,
+  publicApiResponseHeaders,
+  readBoundedJsonBody,
+} from "@/lib/public-api-guards";
 
 const requiredFields = ["name", "email", "institution", "role", "institutionType", "problemType", "problem", "desiredOutcome"] as const;
 const maxRequestBytes = 50_000;
-
-type ConsultationPayload = Record<string, unknown>;
 
 function cleanString(value: unknown, maxLength = 4000) {
   if (typeof value !== "string") return "";
   return value.trim().slice(0, maxLength);
 }
 
+function jsonResponse(payload: object, status = 200) {
+  return NextResponse.json(payload, {
+    status,
+    headers: publicApiResponseHeaders,
+  });
+}
+
 export async function POST(request: Request) {
-  const contentLength = Number(request.headers.get("content-length") ?? "0");
-  if (Number.isFinite(contentLength) && contentLength > maxRequestBytes) {
-    return NextResponse.json({ message: "The enquiry payload is too large." }, { status: 413 });
+  const guard = guardPublicJsonRequest(request);
+  if (!guard.ok) {
+    return jsonResponse({ message: guard.message }, guard.status);
   }
 
-  let body: ConsultationPayload;
-
-  try {
-    body = (await request.json()) as ConsultationPayload;
-  } catch {
-    return NextResponse.json({ message: "Invalid request payload." }, { status: 400 });
+  const parsed = await readBoundedJsonBody(request, maxRequestBytes);
+  if (!parsed.ok) {
+    return parsed.reason === "too_large"
+      ? jsonResponse({ message: "The enquiry payload is too large." }, 413)
+      : jsonResponse({ message: "Invalid request payload." }, 400);
   }
+
+  const body = parsed.body;
 
   if (cleanString(body.website)) {
-    return NextResponse.json({ ok: true });
+    return jsonResponse({ ok: true });
   }
 
   const cleaned = {
@@ -46,18 +58,18 @@ export async function POST(request: Request) {
 
   const missing = requiredFields.filter((field) => !cleaned[field]);
   if (missing.length) {
-    return NextResponse.json({ message: "Please complete all required fields." }, { status: 400 });
+    return jsonResponse({ message: "Please complete all required fields." }, 400);
   }
 
   if (!/^\S+@\S+\.\S+$/.test(cleaned.email)) {
-    return NextResponse.json({ message: "Please provide a valid work email." }, { status: 400 });
+    return jsonResponse({ message: "Please provide a valid work email." }, 400);
   }
 
-  const webhookUrl = process.env.CONSULTATION_WEBHOOK_URL;
+  const webhookUrl = getWebhookUrl(process.env.CONSULTATION_WEBHOOK_URL);
   if (!webhookUrl) {
-    return NextResponse.json(
+    return jsonResponse(
       { message: "Online enquiry submission is not configured on this deployment yet." },
-      { status: 503 },
+      503,
     );
   }
 
@@ -79,11 +91,11 @@ export async function POST(request: Request) {
   }).catch(() => null);
 
   if (!upstream?.ok) {
-    return NextResponse.json(
+    return jsonResponse(
       { message: "The enquiry could not be delivered. Please try again later." },
-      { status: 502 },
+      502,
     );
   }
 
-  return NextResponse.json({ ok: true });
+  return jsonResponse({ ok: true });
 }

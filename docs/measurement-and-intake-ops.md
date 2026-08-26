@@ -57,6 +57,35 @@ MEASUREMENT_WEBHOOK_BEARER_TOKEN=
 
 `CONSULTATION_WEBHOOK_URL` is required for a functional public intake form.
 
+Webhook destinations must use HTTPS in deployed environments. Plain HTTP is accepted only for `localhost` / `127.0.0.1` development endpoints.
+
+## Public POST boundary
+
+`/api/consultation` and `/api/measurement` use the same stateless request boundary before any payload is processed.
+
+The boundary:
+
+- accepts `application/json` only,
+- rejects browser requests identified as `cross-site` or `same-site` by Fetch Metadata,
+- verifies `Origin` or `Referer` against the request origin when those headers are present,
+- requires same-origin browser JavaScript to send the non-simple `X-CreditPassport-Request: browser` header,
+- does not opt into cross-origin CORS access,
+- returns `Cache-Control: no-store`,
+- varies responses on request-provenance headers, and
+- enforces request-size limits against the actual UTF-8 body before JSON parsing, not only the declared `Content-Length`.
+
+The custom browser header is not a secret. Its purpose is to ensure a browser request must satisfy the same-origin/CORS boundary before it can reach the endpoint with the expected request shape.
+
+Server-to-server launch verification may omit browser provenance headers. Those calls remain subject to JSON media-type checks, byte limits, field normalization and endpoint-specific validation.
+
+A dependency-free boundary check is available after deployment:
+
+```bash
+npm run verify:api-boundary -- https://your-production-origin.example
+```
+
+It performs only negative/security checks and does not submit a valid consultation or create a measurement conversion event.
+
 ## Runtime readiness
 
 `GET /api/readiness` reports only boolean configuration state; it never returns webhook URLs or bearer tokens.

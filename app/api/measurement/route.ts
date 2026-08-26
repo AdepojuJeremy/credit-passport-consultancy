@@ -4,11 +4,15 @@ import {
   normalizeCampaignAttribution,
   normalizeMeasurementEvent,
 } from "@/lib/measurement";
+import {
+  getWebhookUrl,
+  guardPublicJsonRequest,
+  publicApiResponseHeaders,
+  readBoundedJsonBody,
+} from "@/lib/public-api-guards";
 
 const maxRequestBytes = 12_000;
 const allowedMetadataKeys = ["context", "sourceContext", "result"] as const;
-
-type MeasurementPayload = Record<string, unknown>;
 
 function cleanMetadata(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
@@ -22,22 +26,37 @@ function cleanMetadata(value: unknown) {
   );
 }
 
+function jsonResponse(payload: object, status: number) {
+  return NextResponse.json(payload, {
+    status,
+    headers: publicApiResponseHeaders,
+  });
+}
+
+function emptyResponse(status = 204) {
+  return new Response(null, {
+    status,
+    headers: publicApiResponseHeaders,
+  });
+}
+
 export async function POST(request: Request) {
-  const contentLength = Number(request.headers.get("content-length") ?? "0");
-  if (Number.isFinite(contentLength) && contentLength > maxRequestBytes) {
-    return NextResponse.json({ message: "Measurement payload is too large." }, { status: 413 });
+  const guard = guardPublicJsonRequest(request);
+  if (!guard.ok) {
+    return jsonResponse({ message: guard.message }, guard.status);
   }
 
-  let body: MeasurementPayload;
-  try {
-    body = (await request.json()) as MeasurementPayload;
-  } catch {
-    return NextResponse.json({ message: "Invalid measurement payload." }, { status: 400 });
+  const parsed = await readBoundedJsonBody(request, maxRequestBytes);
+  if (!parsed.ok) {
+    return parsed.reason === "too_large"
+      ? jsonResponse({ message: "Measurement payload is too large." }, 413)
+      : jsonResponse({ message: "Invalid measurement payload." }, 400);
   }
 
+  const body = parsed.body;
   const event = normalizeMeasurementEvent(body.event);
   if (!event) {
-    return NextResponse.json({ message: "Unknown measurement event." }, { status: 400 });
+    return jsonResponse({ message: "Unknown measurement event." }, 400);
   }
 
   const payload = {
@@ -49,9 +68,14 @@ export async function POST(request: Request) {
     submittedAt: new Date().toISOString(),
   };
 
-  const webhookUrl = process.env.MEASUREMENT_WEBHOOK_URL;
+  const configuredWebhook = process.env.MEASUREMENT_WEBHOOK_URL;
+  if (!configuredWebhook) {
+    return emptyResponse();
+  }
+
+  const webhookUrl = getWebhookUrl(configuredWebhook);
   if (!webhookUrl) {
-    return new Response(null, { status: 204 });
+    return jsonResponse({ message: "Measurement delivery is not configured correctly." }, 503);
   }
 
   const headers = new Headers({ "Content-Type": "application/json" });
@@ -68,8 +92,8 @@ export async function POST(request: Request) {
   }).catch(() => null);
 
   if (!upstream?.ok) {
-    return NextResponse.json({ message: "Measurement delivery failed." }, { status: 502 });
+    return jsonResponse({ message: "Measurement delivery failed." }, 502);
   }
 
-  return new Response(null, { status: 204 });
+  return emptyResponse();
 }
