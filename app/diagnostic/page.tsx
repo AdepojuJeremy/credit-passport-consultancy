@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
+import { DiagnosticDecisionPacket } from "@/components/diagnostic-decision-packet";
 import { JsonLd } from "@/components/json-ld";
 import { creditDecisionDiagnostic } from "@/data/diagnostic";
 import { getSector } from "@/data/sectors";
@@ -96,12 +97,13 @@ export default async function DiagnosticPage({ searchParams }: DiagnosticPagePro
 
       <section className="border-y hairline bg-[color:var(--inverse)] text-[color:var(--inverse-foreground)]">
         <div className="site-container py-20 md:py-32">
-          <div className="grid gap-10 lg:grid-cols-[0.5fr_1.5fr]">
+          <div className="grid gap-10 lg:grid-cols-[0.65fr_1.35fr]">
             <div>
               <p className="kicker text-white/45">What we examine</p>
               <h2 className="mt-6 max-w-md font-[family-name:var(--font-manrope)] text-4xl font-semibold tracking-[-0.05em]">
                 Diagnose the system, not just the model.
               </h2>
+              <DiagnosticDecisionPacket />
             </div>
             <div className="grid gap-px bg-white/15 sm:grid-cols-2">
               {creditDecisionDiagnostic.reviewAreas.map(([number, title, copy]) => (
