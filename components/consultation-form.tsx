@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState, type FormEvent } from "react";
 
 const institutionTypes = [
   "Bank / Microfinance",
@@ -61,7 +61,12 @@ export function ConsultationForm() {
     "mt-2 w-full rounded-[var(--radius-md)] border hairline bg-white px-4 py-3 text-sm outline-none transition-colors placeholder:text-[color:var(--muted)]/65 focus:border-[color:var(--brand-blue)]";
 
   return (
-    <form onSubmit={handleSubmit} className="border-t hairline" aria-describedby="consultation-form-note">
+    <form
+      onSubmit={handleSubmit}
+      className="border-t hairline"
+      aria-describedby="consultation-form-note"
+      aria-busy={status === "submitting"}
+    >
       <div className="grid gap-6 border-b hairline py-7 md:grid-cols-2">
         <label className="text-sm">
           Your name
@@ -69,7 +74,7 @@ export function ConsultationForm() {
         </label>
         <label className="text-sm">
           Work email
-          <input className={inputClass} name="email" type="email" autoComplete="email" required />
+          <input className={inputClass} name="email" type="email" autoComplete="email" inputMode="email" required />
         </label>
         <label className="text-sm">
           Institution
@@ -129,7 +134,8 @@ export function ConsultationForm() {
 
       {message ? (
         <div
-          role="status"
+          role={status === "error" ? "alert" : "status"}
+          aria-live="polite"
           className={`mb-7 rounded-[var(--radius-md)] border p-4 text-sm leading-6 ${status === "success" ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}
         >
           {message}
