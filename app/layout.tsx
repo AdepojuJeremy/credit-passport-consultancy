@@ -4,29 +4,64 @@ import "./globals.css";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getSiteUrl } from "@/lib/site-url";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
+const description =
+  "Credit strategy, decision intelligence, risk analytics, financial data, AI and research for lenders and financial institutions.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
+  applicationName: "CreditPassport Consulting",
   title: {
     default: "CreditPassport Consulting",
     template: "%s | CreditPassport Consulting",
   },
-  description:
-    "Credit strategy, decision intelligence, risk analytics, financial data, AI and research for lenders and financial institutions.",
+  description,
+  icons: {
+    icon: "/brand/logo_icon.svg",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "CreditPassport Consulting",
+    title: "CreditPassport Consulting",
+    description,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "CreditPassport Consulting — better decisions, better credit systems.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CreditPassport Consulting",
+    description,
+    images: ["/opengraph-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
