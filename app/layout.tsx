@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { ScrollProgress } from "@/components/scroll-progress";
@@ -26,6 +26,13 @@ const jetbrainsMono = JetBrains_Mono({
 
 const description =
   "Credit strategy, decision intelligence, risk analytics, financial data, AI and research for lenders and financial institutions.";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#FAFBFC",
+  colorScheme: "light",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
