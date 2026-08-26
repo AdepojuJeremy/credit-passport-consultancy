@@ -5,7 +5,9 @@ const flags = new Set(args.filter((arg) => arg.startsWith("--")));
 const originArg = args.find((arg) => !arg.startsWith("--")) || process.env.PRODUCTION_ORIGIN;
 
 if (!originArg) {
-  console.error("Usage: npm run verify:production -- https://example.com [--expect-ready] [--submit-intake]");
+  console.error(
+    "Usage: npm run verify:production -- https://example.com [--expect-ready] [--expect-indexable] [--submit-intake]",
+  );
   process.exit(2);
 }
 
@@ -20,6 +22,7 @@ try {
 }
 
 const expectReady = flags.has("--expect-ready");
+const expectIndexable = flags.has("--expect-indexable");
 const submitIntake = flags.has("--submit-intake");
 const failures = [];
 const warnings = [];
@@ -77,7 +80,10 @@ function hasCanonical(html, expectedPath) {
     if (!isCanonical || !hrefMatch) return false;
 
     try {
-      return new URL(hrefMatch[1], origin).pathname === expectedPath;
+      const canonical = new URL(hrefMatch[1], origin);
+      const pathMatches = canonical.pathname === expectedPath;
+      const originMatches = !expectIndexable || canonical.origin === origin;
+      return pathMatches && originMatches;
     } catch {
       return false;
     }
@@ -101,7 +107,14 @@ async function checkSeoPage(path, schemaTypes, { canonical = true } = {}) {
 
     if (canonical) {
       if (hasCanonical(html, path)) pass(`${path} canonical`);
-      else fail(`${path} canonical`, "canonical link missing or points to another path");
+      else {
+        fail(
+          `${path} canonical`,
+          expectIndexable
+            ? "canonical link missing, has the wrong path, or points to a different origin"
+            : "canonical link missing or points to another path",
+        );
+      }
     }
   } catch (error) {
     fail(`SEO ${path}`, error instanceof Error ? error.message : String(error));
@@ -133,13 +146,37 @@ if (homeResponse) {
     "x-content-type-options": "nosniff",
     "x-frame-options": "DENY",
     "referrer-policy": "strict-origin-when-cross-origin",
-    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+    "cross-origin-opener-policy": "same-origin",
+    "x-dns-prefetch-control": "off",
   };
 
   for (const [name, expected] of Object.entries(expectedHeaders)) {
     const actual = homeResponse.headers.get(name);
     if (actual === expected) pass(`security header ${name}`);
     else fail(`security header ${name}`, `expected ${JSON.stringify(expected)}, received ${JSON.stringify(actual)}`);
+  }
+
+  const hsts = homeResponse.headers.get("strict-transport-security") || "";
+  if (/max-age=\d+/i.test(hsts)) pass("security header strict-transport-security");
+  else fail("security header strict-transport-security", `missing max-age; received ${JSON.stringify(hsts)}`);
+
+  const csp = homeResponse.headers.get("content-security-policy") || "";
+  const requiredCspDirectives = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'",
+    "connect-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "upgrade-insecure-requests",
+  ];
+  const missingDirectives = requiredCspDirectives.filter((directive) => !csp.includes(directive));
+  if (missingDirectives.length) {
+    fail("Content-Security-Policy", `missing ${missingDirectives.join(", ")}`);
+  } else {
+    pass("Content-Security-Policy");
   }
 }
 
@@ -153,9 +190,22 @@ await checkSeoPage("/case-studies/decision-system-reconstruction", ["BreadcrumbL
 try {
   const robots = await request("/robots.txt");
   const text = await robots.text();
-  if (!robots.ok) fail("robots.txt", `HTTP ${robots.status}`);
-  else if (!/sitemap/i.test(text)) fail("robots.txt", "sitemap reference missing");
-  else pass("robots.txt includes sitemap reference");
+  const blocksAll = /^Disallow:\s*\/\s*$/im.test(text);
+  const hasSitemap = /^Sitemap:/im.test(text);
+
+  if (!robots.ok) {
+    fail("robots.txt", `HTTP ${robots.status}`);
+  } else if (expectIndexable) {
+    if (blocksAll) fail("robots.txt indexing", "canonical production origin blocks all crawlers");
+    else if (!hasSitemap) fail("robots.txt indexing", "canonical production origin has no sitemap reference");
+    else pass("robots.txt allows canonical indexing and includes sitemap");
+  } else if (blocksAll) {
+    warn("robots.txt indexing", "this deployment is intentionally non-indexable");
+  } else if (hasSitemap) {
+    pass("robots.txt includes sitemap reference");
+  } else {
+    warn("robots.txt", "no sitemap reference");
+  }
 } catch (error) {
   fail("robots.txt", error instanceof Error ? error.message : String(error));
 }
@@ -200,9 +250,16 @@ try {
   }
 
   if (checks && typeof checks === "object") {
-    console.log(`      site URL: ${checks.siteUrlConfigured ? "configured" : "missing"}`);
+    console.log(`      canonical site URL: ${checks.canonicalSiteUrlConfigured ? "configured" : "missing"}`);
+    console.log(`      indexing: ${checks.indexingEnabled ? "enabled" : "disabled"}`);
     console.log(`      consultation webhook: ${checks.consultationWebhookConfigured ? "configured" : "missing"}`);
     console.log(`      measurement webhook: ${checks.measurementWebhookConfigured ? "configured" : "optional / missing"}`);
+
+    if (expectIndexable && checks.indexingEnabled !== true) {
+      fail("runtime indexing readiness", "deployment does not report indexing enabled");
+    } else if (expectIndexable) {
+      pass("runtime indexing readiness");
+    }
   }
 } catch (error) {
   fail("runtime readiness", error instanceof Error ? error.message : String(error));
