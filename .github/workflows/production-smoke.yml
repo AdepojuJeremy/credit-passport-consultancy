@@ -12,6 +12,11 @@ on:
         required: true
         default: true
         type: boolean
+      expect_indexable:
+        description: Require this origin to be the canonical indexable deployment
+        required: true
+        default: true
+        type: boolean
       submit_intake:
         description: Send one synthetic consultation to the configured intake destination
         required: true
@@ -34,11 +39,15 @@ jobs:
         env:
           ORIGIN: ${{ inputs.origin }}
           EXPECT_READY: ${{ inputs.expect_ready }}
+          EXPECT_INDEXABLE: ${{ inputs.expect_indexable }}
           SUBMIT_INTAKE: ${{ inputs.submit_intake }}
         run: |
           args=("$ORIGIN")
           if [[ "$EXPECT_READY" == "true" ]]; then
             args+=("--expect-ready")
+          fi
+          if [[ "$EXPECT_INDEXABLE" == "true" ]]; then
+            args+=("--expect-indexable")
           fi
           if [[ "$SUBMIT_INTAKE" == "true" ]]; then
             args+=("--submit-intake")

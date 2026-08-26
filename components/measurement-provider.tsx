@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { resolveConsultationContext } from "@/lib/consultation-context";
 import {
   campaignKeys,
   normalizeCampaignAttribution,
@@ -75,6 +76,16 @@ export function trackMeasurementEvent(event: MeasurementEventName, metadata: Mea
   }).catch(() => undefined);
 }
 
+function contactContext(url: URL) {
+  const searchParams = Object.fromEntries(url.searchParams.entries());
+  const context = resolveConsultationContext(searchParams).sourceContext;
+
+  if (context !== "direct") return context;
+  if (window.location.pathname === "/") return "homepage";
+
+  return "direct";
+}
+
 function deriveClickEvent(anchor: HTMLAnchorElement) {
   const rawHref = anchor.getAttribute("href");
   if (!rawHref || rawHref.startsWith("#")) return null;
@@ -93,7 +104,7 @@ function deriveClickEvent(anchor: HTMLAnchorElement) {
   }
 
   if (url.pathname === "/contact") {
-    return { event: "contact_cta" as const, context: url.searchParams.get("source") ?? "direct" };
+    return { event: "contact_cta" as const, context: contactContext(url) };
   }
 
   if (url.pathname.startsWith("/sectors/")) {

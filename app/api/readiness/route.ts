@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
+import { getConfiguredSiteUrl, isIndexableDeployment } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
 export function GET() {
-  const siteUrlConfigured = Boolean(
-    process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL,
-  );
+  const canonicalSiteUrlConfigured = Boolean(getConfiguredSiteUrl());
+  const indexingEnabled = isIndexableDeployment();
   const consultationWebhookConfigured = Boolean(process.env.CONSULTATION_WEBHOOK_URL);
   const measurementWebhookConfigured = Boolean(process.env.MEASUREMENT_WEBHOOK_URL);
-  const ready = siteUrlConfigured && consultationWebhookConfigured;
+  const ready = canonicalSiteUrlConfigured && consultationWebhookConfigured;
 
   return NextResponse.json(
     {
       status: ready ? "ready" : "needs_configuration",
       checks: {
-        siteUrlConfigured,
+        siteUrlConfigured: canonicalSiteUrlConfigured,
+        canonicalSiteUrlConfigured,
+        indexingEnabled,
         consultationWebhookConfigured,
         measurementWebhookConfigured,
       },
