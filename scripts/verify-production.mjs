@@ -41,14 +41,16 @@ function warn(label, detail) {
 }
 
 async function request(path, options = {}) {
+  const { headers, ...rest } = options;
+
   return fetch(`${origin}${path}`, {
     redirect: "follow",
     signal: AbortSignal.timeout(15_000),
+    ...rest,
     headers: {
       "User-Agent": "CreditPassport-Production-Smoke/1.0",
-      ...(options.headers || {}),
+      ...(headers || {}),
     },
-    ...options,
   });
 }
 
@@ -64,6 +66,45 @@ async function checkRoute(path) {
   } catch (error) {
     fail(`GET ${path}`, error instanceof Error ? error.message : String(error));
     return null;
+  }
+}
+
+function hasCanonical(html, expectedPath) {
+  const linkTags = html.match(/<link\b[^>]*>/gi) || [];
+  return linkTags.some((tag) => {
+    const isCanonical = /rel=["']canonical["']/i.test(tag);
+    const hrefMatch = tag.match(/href=["']([^"']+)["']/i);
+    if (!isCanonical || !hrefMatch) return false;
+
+    try {
+      return new URL(hrefMatch[1], origin).pathname === expectedPath;
+    } catch {
+      return false;
+    }
+  });
+}
+
+async function checkSeoPage(path, schemaTypes, { canonical = true } = {}) {
+  try {
+    const response = await request(path);
+    const html = await response.text();
+
+    if (!response.ok) {
+      fail(`SEO ${path}`, `HTTP ${response.status}`);
+      return;
+    }
+
+    for (const type of schemaTypes) {
+      if (html.includes(`\"@type\":\"${type}\"`)) pass(`${path} JSON-LD ${type}`);
+      else fail(`${path} JSON-LD ${type}`, "schema type missing from rendered HTML");
+    }
+
+    if (canonical) {
+      if (hasCanonical(html, path)) pass(`${path} canonical`);
+      else fail(`${path} canonical`, "canonical link missing or points to another path");
+    }
+  } catch (error) {
+    fail(`SEO ${path}`, error instanceof Error ? error.message : String(error));
   }
 }
 
@@ -101,6 +142,13 @@ if (homeResponse) {
     else fail(`security header ${name}`, `expected ${JSON.stringify(expected)}, received ${JSON.stringify(actual)}`);
   }
 }
+
+await checkSeoPage("/", ["Organization", "WebSite"], { canonical: false });
+await checkSeoPage("/diagnostic", ["Service", "BreadcrumbList"]);
+await checkSeoPage("/consulting/decision-intelligence", ["Service", "BreadcrumbList"]);
+await checkSeoPage("/research/probability-is-not-a-decision", ["Article", "BreadcrumbList"]);
+await checkSeoPage("/sectors/digital-lenders-bnpl", ["BreadcrumbList"]);
+await checkSeoPage("/case-studies/decision-system-reconstruction", ["BreadcrumbList"]);
 
 try {
   const robots = await request("/robots.txt");
