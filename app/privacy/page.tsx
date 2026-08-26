@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: "What the consultation form collects",
-    copy: "The public enquiry form asks for your name, work email, institution, role, institution type, the area you want to discuss, a description of the decision problem, the data currently available and the outcome you want to improve.",
+    copy: "The public enquiry form asks for your name, work email, institution, role, institution type, the area you want to discuss, a description of the decision problem, the data currently available and the outcome you want to improve. When you enter the form from a known CreditPassport service, sector or Diagnostic page, that page context may also be attached to the enquiry so the team does not ask you to repeat it.",
   },
   {
     title: "What the form is not for",
@@ -17,6 +17,10 @@ const sections = [
   {
     title: "How enquiry information is used",
     copy: "Information submitted through the form is used to review the consulting request, understand the institution and decision problem, determine whether CreditPassport can help and communicate about the enquiry or a potential engagement.",
+  },
+  {
+    title: "Context and tracking",
+    copy: "Context attached to an enquiry is limited to recognized CreditPassport paths such as the Diagnostic, a named sector or a named consulting capability. The intake does not add arbitrary browser history or free-form referrer data to the enquiry payload.",
   },
   {
     title: "Delivery infrastructure",
