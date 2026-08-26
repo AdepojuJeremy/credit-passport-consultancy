@@ -9,6 +9,10 @@ import {
   type CampaignAttribution,
   type MeasurementEventName,
 } from "@/lib/measurement";
+import {
+  browserRequestHeaderName,
+  browserRequestHeaderValue,
+} from "@/lib/public-api-guards";
 
 const campaignStorageKey = "creditpassport_campaign_v1";
 
@@ -57,7 +61,10 @@ export function trackMeasurementEvent(event: MeasurementEventName, metadata: Mea
 
   void fetch("/api/measurement", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      [browserRequestHeaderName]: browserRequestHeaderValue,
+    },
     body: JSON.stringify({
       event,
       path: window.location.pathname,
