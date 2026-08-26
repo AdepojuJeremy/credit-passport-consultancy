@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Manrope } from "next/font/google";
 import "./globals.css";
+import { JsonLd } from "@/components/json-ld";
 import { MeasurementProvider } from "@/components/measurement-provider";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getSiteUrl } from "@/lib/site-url";
+import { siteStructuredData } from "@/lib/structured-data";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -76,6 +78,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable}`}>
+        <JsonLd data={siteStructuredData()} />
         <a className="skip-link" href="#main-content">
           Skip to content
         </a>
