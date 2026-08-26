@@ -7,6 +7,7 @@
     "typecheck": "tsc --noEmit",
     "build": "next build",
     "check": "npm run typecheck && npm run build",
+    "verify:production": "node scripts/verify-production.mjs",
     "start": "next start"
   },
   "dependencies": {
