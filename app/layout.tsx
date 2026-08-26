@@ -6,7 +6,7 @@ import { MeasurementProvider } from "@/components/measurement-provider";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getSiteUrl } from "@/lib/site-url";
+import { getSiteUrl, isIndexableDeployment } from "@/lib/site-url";
 import { siteStructuredData } from "@/lib/structured-data";
 
 const inter = Inter({
@@ -29,6 +29,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 const description =
   "Credit strategy, decision intelligence, risk analytics, financial data, AI and research for lenders and financial institutions.";
+const indexable = isIndexableDeployment();
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -68,10 +69,16 @@ export const metadata: Metadata = {
     description,
     images: ["/opengraph-image"],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: indexable
+    ? {
+        index: true,
+        follow: true,
+      }
+    : {
+        index: false,
+        follow: false,
+        nocache: true,
+      },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
