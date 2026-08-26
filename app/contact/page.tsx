@@ -1,28 +1,62 @@
 import type { Metadata } from "next";
+import { ConsultationForm } from "@/components/consultation-form";
 
-export const metadata: Metadata = { title: "Contact" };
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Bring CreditPassport a credit, risk, data or decision problem for an initial consulting review.",
+};
+
+const intake = [
+  ["01", "Institution", "Who are you, what credit products or decision systems do you operate, and who owns the decision today?"],
+  ["02", "Decision problem", "Where is the current lending, risk, data or operational process constrained, inconsistent or poorly understood?"],
+  ["03", "Evidence", "What data, policy rules, historical outcomes, models or decision logs are available to diagnose the system?"],
+  ["04", "Outcome", "What needs to improve: approval quality, defaults, review rate, explainability, speed, policy control or data reliability?"],
+];
 
 export default function ContactPage() {
   return (
-    <section className="site-container py-20 md:py-32">
-      <p className="kicker">Contact</p>
-      <h1 className="section-title mt-8 max-w-5xl">Bring us the decision problem.</h1>
-      <p className="mt-8 max-w-2xl text-lg leading-7 text-[color:var(--muted)]">
-        The production contact workflow will be connected before launch. It should capture the institution, the decision or portfolio problem, current data availability and the outcome the engagement needs to improve.
-      </p>
-      <div className="mt-20 grid gap-px bg-black/15 md:grid-cols-3">
-        {[
-          ["01", "Institution", "Who are you, what products do you offer, and who makes the decision today?"],
-          ["02", "Problem", "What lending, risk, data or operational decision is currently failing or constrained?"],
-          ["03", "Outcome", "What would materially improve: approval quality, defaults, speed, explainability, data or policy control?"],
-        ].map(([number, title, copy]) => (
-          <div key={number} className="min-h-64 bg-[color:var(--background)] p-6">
-            <span className="kicker text-[color:var(--muted)]">{number}</span>
-            <h2 className="mt-20 text-2xl tracking-[-0.045em]">{title}</h2>
-            <p className="mt-4 text-sm leading-6 text-[color:var(--muted)]">{copy}</p>
+    <>
+      <section className="section-grid border-b hairline">
+        <div className="site-container py-20 md:py-32">
+          <p className="kicker text-[color:var(--brand-blue)]">Contact / Consultation</p>
+          <h1 className="section-title mt-8 max-w-5xl">Bring us the decision problem.</h1>
+          <p className="mt-8 max-w-3xl text-lg leading-7 text-[color:var(--muted)]">
+            A useful first conversation is specific. Tell us which decision matters, what evidence exists today and what business outcome needs to change. We can then determine whether the problem calls for strategy, analysis, modelling, policy redesign or infrastructure work.
+          </p>
+        </div>
+      </section>
+
+      <section className="site-container py-20 md:py-28">
+        <div className="grid gap-14 lg:grid-cols-[0.55fr_1.45fr]">
+          <aside className="lg:sticky lg:top-28 lg:self-start">
+            <p className="kicker">What to expect</p>
+            <p className="mt-5 max-w-sm text-sm leading-6 text-[color:var(--muted)]">
+              The initial intake is diagnostic, not a data-transfer channel. Share enough context to define the problem; sensitive borrower data and confidential datasets should move only through an agreed secure process after scope is established.
+            </p>
+          </aside>
+          <div>
+            <div className="grid gap-px bg-[color:var(--line-strong)] sm:grid-cols-2">
+              {intake.map(([number, title, copy]) => (
+                <article key={number} className="min-h-60 bg-[color:var(--surface)] p-6">
+                  <span className="kicker text-[color:var(--brand-blue)]">{number}</span>
+                  <h2 className="mt-16 font-[family-name:var(--font-manrope)] text-2xl font-semibold tracking-[-0.045em]">{title}</h2>
+                  <p className="mt-4 text-sm leading-6 text-[color:var(--muted)]">{copy}</p>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-20">
+              <p className="kicker">Consultation intake</p>
+              <h2 className="mt-5 max-w-3xl font-[family-name:var(--font-manrope)] text-4xl font-semibold tracking-[-0.05em] md:text-5xl">
+                Give us enough context to understand the system behind the problem.
+              </h2>
+              <div className="mt-10">
+                <ConsultationForm />
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }
