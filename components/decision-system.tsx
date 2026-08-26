@@ -77,7 +77,7 @@ export function DecisionSystem() {
               <motion.div
                 key={stage.number}
                 onMouseEnter={() => setActiveStage(index)}
-                className="relative grid gap-4 border-b border-white/12 px-5 py-5 last:border-b-0 md:grid-cols-[64px_0.8fr_1.25fr] md:items-center"
+                className="relative grid gap-4 border-b border-white/10 px-5 py-5 last:border-b-0 md:grid-cols-[64px_0.8fr_1.25fr] md:items-center"
                 animate={
                   reduceMotion
                     ? undefined
