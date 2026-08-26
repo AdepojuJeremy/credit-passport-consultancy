@@ -2,44 +2,45 @@
 
 Consultancy-first website for CreditPassport: credit strategy, decision intelligence, risk analytics, financial data, AI/ML, and research.
 
-## Strategic direction
+## Business direction
 
-The public site positions CreditPassport as a consulting and research practice today. Future product infrastructure remains a separate productization track.
+The public site positions CreditPassport as a consulting and research practice today, while keeping future product infrastructure as a separate productization track.
 
-The visual language is inspired by the editorial rhythm of the Optimus reference site: oversized typography, restrained monochrome presentation, numbered modules, fine borders, structured grids and technical storytelling. The implementation adapts that design grammar to CreditPassport rather than copying its content or brand.
+The operating loop is:
 
-## Stack
+**Research → Consulting → Proprietary methodology → Repeatable tooling → Productization**
 
-- Next.js 16
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- Motion
-- Lucide
-- Vercel-ready
-
-## Routes
+## Current site
 
 - `/` — consultancy-first homepage
-- `/consulting` — service architecture
-- `/research` — research practice and topics
-- `/case-studies` — evidence-led publishing area
-- `/about` — company model and thesis
-- `/contact` — engagement-intake placeholder
+- `/consulting` — six consulting capabilities
+- `/consulting/[slug]` — detailed capability pages with questions, work, outputs and measures
+- `/research` — practitioner research-note index
+- `/research/[slug]` — source-grounded research notes
+- `/case-studies` — evidence-led selected work / engagement patterns
+- `/case-studies/[slug]` — anonymized engagement pattern pages with explicit evidence status
+- `/about`
+- `/contact`
 
-## Local development
+## Research currently included
 
-```bash
-npm install
-npm run dev
-```
+1. Probability Is Not a Decision
+2. Review Is an Uncertainty State
+3. From Transactions to Economic Events
+4. Validate the Lending System, Not Just the Model
 
-Then open `http://localhost:3000`.
+These are practitioner research notes derived from CreditPassport's internal decision architecture. They are explicitly not presented as externally validated empirical findings.
 
-## Next implementation slices
+## Public claims policy
 
-1. Import and reconcile the existing CreditPassport brand assets.
-2. Add motion/scroll interactions after the static visual system is approved.
-3. Add MDX publishing for research and case studies.
-4. Connect the consultation intake flow.
-5. Add SEO, analytics, accessibility QA and deployment configuration.
+See `docs/content-source-policy.md`. Numerical client results and named case studies are withheld until evidence and publication permission are reviewed.
+
+## Brand direction
+
+The site adapts the editorial, high-contrast, typography-led interaction language of the Optimus reference to CreditPassport rather than copying its subject matter.
+
+The current web identity uses the supplied CreditPassport Blue / Indigo / Mint / Coral logo system, with typography, spacing, motion and accessibility conventions drawn from the longer CreditPassport design-system deck. See `docs/brand-source-of-truth.md`.
+
+## Product boundary
+
+This repository is only for the public consulting/research site. Future scoring engines, feature stores, decision engines, lender APIs and production financial infrastructure should live outside this repository.
