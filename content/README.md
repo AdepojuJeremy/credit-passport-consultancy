@@ -1,12 +1,19 @@
-# Content publishing
+# Content
 
-This directory is the editorial source for CreditPassport Research and public case studies.
+The `content/` directory remains the editorial staging area for future MDX publishing.
 
-## Rules
+The current public research notes and engagement patterns are rendered from typed data modules in `data/` so the first content pass can ship without adding a CMS or markdown runtime dependency.
 
-- Research should be evidence-led and reviewed before publication.
-- Case studies must not claim client outcomes that have not been substantiated and approved for public use.
-- Keep future product claims clearly separated from current consulting capabilities.
-- Use the templates in `research/_template.mdx` and `case-studies/_template.mdx`.
+## Current sources
 
-The MDX files are intentionally content-only in this pass. Routing and rendering can be wired once the first reviewed research paper and approved case study are ready.
+- Research notes: `data/research-posts.ts`
+- Engagement patterns: `data/engagement-patterns.ts`
+- Consulting capabilities: `data/services.ts`
+
+## Future MDX migration
+
+The templates under `content/research/` and `content/case-studies/` define the intended editorial structure. When publishing volume justifies a full MDX pipeline, migrate reviewed content into those files while preserving slugs and page routes.
+
+## Evidence rules
+
+See `docs/content-source-policy.md` before publishing client names, numerical results, market claims or causal findings.
