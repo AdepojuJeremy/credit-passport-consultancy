@@ -8,6 +8,7 @@
     "build": "next build",
     "check": "npm run typecheck && npm run build",
     "verify:production": "node scripts/verify-production.mjs",
+    "verify:api-boundary": "node scripts/verify-api-boundary.mjs",
     "start": "next start"
   },
   "dependencies": {
