@@ -102,6 +102,37 @@ select {
   background-size: 56px 56px;
 }
 
+.hero-globe-host {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+
+.hero-globe-host > .site-container {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-globe-perspective {
+  position: absolute;
+  z-index: 1;
+  top: clamp(2rem, 6vh, 5.5rem);
+  right: clamp(-25rem, -14vw, -7rem);
+  width: clamp(42rem, 64vw, 72rem);
+  aspect-ratio: 1;
+  perspective: 1100px;
+  pointer-events: auto;
+  opacity: 0.82;
+  mask-image: radial-gradient(circle at 50% 50%, black 0 58%, rgba(0, 0, 0, 0.72) 70%, transparent 88%);
+}
+
+.hero-globe-shell {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
 .inverse-grid {
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
@@ -210,6 +241,14 @@ select {
   .display {
     font-size: clamp(3.6rem, 17vw, 6rem);
   }
+
+  .hero-globe-perspective {
+    top: 7rem;
+    right: -72vw;
+    width: 138vw;
+    opacity: 0.38;
+    pointer-events: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -229,5 +268,9 @@ select {
   .inverse-grid,
   .brand-rule {
     animation: none;
+  }
+
+  .hero-globe-shell {
+    transform: none !important;
   }
 }
