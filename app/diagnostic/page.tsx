@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
 import { creditDecisionDiagnostic } from "@/data/diagnostic";
+import { getSector } from "@/data/sectors";
 
 export const metadata: Metadata = {
   title: "Credit Decision Diagnostic",
@@ -22,7 +23,18 @@ function NumberedList({ items }: { items: ReadonlyArray<string> }) {
   );
 }
 
-export default function DiagnosticPage() {
+type DiagnosticPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function DiagnosticPage({ searchParams }: DiagnosticPageProps) {
+  const params = await searchParams;
+  const sectorParam = Array.isArray(params.sector) ? params.sector[0] : params.sector;
+  const sector = sectorParam ? getSector(sectorParam) : undefined;
+  const contactHref = sector
+    ? `/contact?from=diagnostic&sector=${sector.slug}`
+    : "/contact?from=diagnostic";
+
   return (
     <>
       <section className="section-grid border-b hairline">
@@ -32,9 +44,14 @@ export default function DiagnosticPage() {
           <p className="mt-8 max-w-3xl text-lg leading-8 text-[color:var(--muted)]">
             {creditDecisionDiagnostic.description}
           </p>
+          {sector ? (
+            <p className="mt-6 w-fit rounded-full border hairline bg-[color:var(--panel)] px-4 py-2 text-sm text-[color:var(--muted)]">
+              Context: {sector.title}
+            </p>
+          ) : null}
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
-              href="/contact"
+              href={contactHref}
               className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-blue)] px-6 py-3 text-sm font-medium text-white"
             >
               Request a diagnostic <ArrowUpRight size={15} aria-hidden="true" />
@@ -129,7 +146,7 @@ export default function DiagnosticPage() {
             </h2>
           </div>
           <Link
-            href="/contact"
+            href={contactHref}
             className="mt-8 inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-[color:var(--brand-indigo)] md:mt-0"
           >
             Request a diagnostic <ArrowUpRight size={15} aria-hidden="true" />
