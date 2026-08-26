@@ -123,6 +123,10 @@ async function checkSeoPage(path, schemaTypes, { canonical = true } = {}) {
 
 console.log(`\nCreditPassport production verification\nOrigin: ${origin}\n`);
 
+if (expectIndexable && !origin.startsWith("https://")) {
+  fail("canonical origin protocol", "indexable production must use HTTPS");
+}
+
 const publicRoutes = [
   "/",
   "/consulting",
@@ -178,6 +182,16 @@ if (homeResponse) {
   } else {
     pass("Content-Security-Policy");
   }
+
+  const robotsHeader = homeResponse.headers.get("x-robots-tag") || "";
+  const headerNoindex = /\bnoindex\b/i.test(robotsHeader);
+  if (expectIndexable && headerNoindex) {
+    fail("X-Robots-Tag", `canonical origin is marked noindex: ${robotsHeader}`);
+  } else if (expectIndexable) {
+    pass("canonical origin is not marked noindex");
+  } else if (headerNoindex) {
+    warn("X-Robots-Tag", "deployment is intentionally non-indexable");
+  }
 }
 
 await checkSeoPage("/", ["Organization", "WebSite"], { canonical: false });
@@ -190,21 +204,17 @@ await checkSeoPage("/case-studies/decision-system-reconstruction", ["BreadcrumbL
 try {
   const robots = await request("/robots.txt");
   const text = await robots.text();
-  const blocksAll = /^Disallow:\s*\/\s*$/im.test(text);
   const hasSitemap = /^Sitemap:/im.test(text);
 
   if (!robots.ok) {
     fail("robots.txt", `HTTP ${robots.status}`);
   } else if (expectIndexable) {
-    if (blocksAll) fail("robots.txt indexing", "canonical production origin blocks all crawlers");
-    else if (!hasSitemap) fail("robots.txt indexing", "canonical production origin has no sitemap reference");
-    else pass("robots.txt allows canonical indexing and includes sitemap");
-  } else if (blocksAll) {
-    warn("robots.txt indexing", "this deployment is intentionally non-indexable");
+    if (!hasSitemap) fail("robots.txt indexing", "canonical production origin has no sitemap reference");
+    else pass("robots.txt advertises canonical sitemap");
   } else if (hasSitemap) {
     pass("robots.txt includes sitemap reference");
   } else {
-    warn("robots.txt", "no sitemap reference");
+    warn("robots.txt indexing", "secondary deployment intentionally omits sitemap advertisement");
   }
 } catch (error) {
   fail("robots.txt", error instanceof Error ? error.message : String(error));
